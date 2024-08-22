@@ -10,15 +10,15 @@ from src.rnr.app.schemas import GaugeData, GaugeForecast
 router = APIRouter()
 
 
-@router.get("/{identifier}", response_model=GaugeData)
+@router.get("/{lid}", response_model=GaugeData)
 async def get_gauge_data(
-    identifier: str, settings: Annotated[Settings, Depends(get_settings)]
+    lid: str, settings: Annotated[Settings, Depends(get_settings)]
 ) -> GaugeData:
     """A route to get the gauge metadata
 
     Parameters
     ----------
-    identifier: str
+    lid: str
         The identifier for the API endpoint
     settings: Settings
         The BaseSettings config object
@@ -28,18 +28,18 @@ async def get_gauge_data(
     GaugeData
         The validated gauge metadata
     """
-    return await NWPSService.get_gauge_data(identifier, settings)
+    return await NWPSService.get_gauge_data(lid, settings)
 
 
-@router.get("/{identifier}/forecast", response_model=GaugeForecast)
+@router.get("/{lid}/forecast", response_model=GaugeForecast)
 async def get_gauge_product_forecast(
-    identifier: str, settings: Annotated[Settings, Depends(get_settings)]
+    lid: str, settings: Annotated[Settings, Depends(get_settings)]
 ) -> GaugeForecast:
     """ "A route to get the gauge forecast
 
     Parameters
     ----------
-    identifier: str
+    lid: str
         The identifier for the API endpoint
     settings: Settings
         The BaseSettings config object
@@ -49,4 +49,4 @@ async def get_gauge_product_forecast(
     GaugeForecast
         The validated gauge forecast
     """
-    return await NWPSService.get_gauge_product_forecast(identifier, settings)
+    return await NWPSService.get_gauge_product_forecast(lid, settings)

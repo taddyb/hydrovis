@@ -36,9 +36,9 @@ async def read_rfc_domain_data(db: Session = Depends(get_db)) -> RFCDatabaseEntr
     return RFCReaderService.get_rfc_data(db)
 
 
-@router.get("/{identifier}", response_model=RFCDatabaseEntries)
+@router.get("/{lid}", response_model=RFCDatabaseEntries)
 async def read_single_rfc_domain_data(
-    identifier: str, db: Session = Depends(get_db)
+    lid: str, db: Session = Depends(get_db)
 ) -> RFCDatabaseEntries:
     """Reads RFC domain data from the database
 
@@ -52,7 +52,7 @@ async def read_single_rfc_domain_data(
     RFCDatabaseEntries
         An object with many RFCDatabaseEntry points
     """
-    return RFCReaderService.get_rfc_data(db, identifier=identifier)
+    return RFCReaderService.get_rfc_data(db, identifier=lid)
 
 
 @router.post(

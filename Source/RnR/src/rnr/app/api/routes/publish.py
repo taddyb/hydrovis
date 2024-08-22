@@ -17,9 +17,9 @@ from src.rnr.app.schemas import PublishMessagesResponse, ResultItem, Summary
 router = APIRouter()
 
 
-@router.post("/start/{identifier}", response_model=PublishMessagesResponse)
+@router.post("/start/{lid}", response_model=PublishMessagesResponse)
 async def publish_single_message(
-    identifier: str,
+    lid: str,
     settings: Annotated[Settings, Depends(get_settings)],
     db: Session = Depends(get_db),
 ) -> PublishMessagesResponse:
@@ -50,7 +50,7 @@ async def publish_single_message(
     connection = start_connection(settings.pika_url)
     channel = start_work_queues(connection, settings)
     # Since we are using an identifier, there will be one entry here
-    rfc_entry = RFCReaderService.get_rfc_data(db, identifier=identifier).entries[
+    rfc_entry = RFCReaderService.get_rfc_data(db, identifier=lid).entries[
         0
     ]  # An RFCDatabaseEntries obj is always returned
 
