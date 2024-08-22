@@ -10,6 +10,3 @@ api_router.include_router(
     prefix="/publish",
     tags=["Publish Forecasts to the Replace and Route pipeline"],
 )
-# api_router.include_router(
-#     consumer.router, prefix="/consumer", tags=["The Replace and Route Pipeline"]
-# )
