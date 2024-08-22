@@ -1,13 +1,22 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
 from fastapi.responses import Response
 
 from src.rnr.app.api.router import api_router
 from src.rnr.app.core.cache import get_settings
+from src.rnr.app.core.rabbit_connection import rabbit_connection
 
 settings = get_settings()
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    await rabbit_connection.connect()
+    yield
+    await rabbit_connection.disconnect()
+
 app = FastAPI(
     title=settings.project_name,
+    lifespan=lifespan
 )
 
 app.include_router(api_router, prefix=settings.api_v1_str)
@@ -16,3 +25,5 @@ app.include_router(api_router, prefix=settings.api_v1_str)
 @app.head("/health")
 async def health_check():
     return Response(status_code=status.HTTP_200_OK)
+
+
