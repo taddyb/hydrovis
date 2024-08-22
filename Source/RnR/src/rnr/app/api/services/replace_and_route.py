@@ -23,11 +23,11 @@ class ReplaceAndRoute:
     This is the service for your T-Route data formatting
     """
 
-    def read_message(self, message: str) -> Dict[str, Any]:
-        message_string = message.body.decode()
-        json_start = message_string.find("{")
-        json_end = message_string.rfind("}")
-        json_string = message_string[json_start : json_end + 1].replace("\\", "")
+    def read_message(self, body: str) -> Dict[str, Any]:
+        message_str = body.decode()
+        json_start = message_str.find("{")
+        json_end = message_str.rfind("}")
+        json_string = message_str[json_start : json_end + 1].replace("\\", "")
         json_data = json.loads(json_string)
         return json_data
 
@@ -112,7 +112,7 @@ class ReplaceAndRoute:
         return {"status": "OK", "domain_files": domain_files}
 
     async def process_request(self, message: AbstractIncomingMessage):
-        json_data = self.read_message(message)
+        json_data = self.read_message(message.body)
         lid = json_data["lid"]
         feature_id = json_data["feature_id"]
         output_forcing_path = settings.csv_forcing_path
