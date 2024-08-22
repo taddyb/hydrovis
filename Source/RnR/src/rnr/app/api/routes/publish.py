@@ -4,8 +4,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from src.rnr.app.api.client.pika import (close_connection, start_connection,
-                                         start_work_queues)
 from src.rnr.app.api.database import get_db
 from src.rnr.app.api.services.publish import MessagePublisherService
 from src.rnr.app.api.services.rfc import RFCReaderService

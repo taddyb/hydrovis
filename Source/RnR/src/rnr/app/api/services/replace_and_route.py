@@ -4,11 +4,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
-from aio_pika.abc import AbstractIncomingMessage
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 import redis
+from aio_pika.abc import AbstractIncomingMessage
 
 from src.rnr.app.core.cache import get_settings
 from src.rnr.app.core.exceptions import ManyToOneError
@@ -111,10 +111,7 @@ class ReplaceAndRoute:
             )
         return {"status": "OK", "domain_files": domain_files}
 
-    async def process_request(
-            self, 
-            message: AbstractIncomingMessage
-        ):
+    async def process_request(self, message: AbstractIncomingMessage):
         json_data = self.read_message(message)
         lid = json_data["lid"]
         feature_id = json_data["feature_id"]

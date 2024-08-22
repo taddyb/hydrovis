@@ -1,11 +1,10 @@
-import json
-import logging
 from dataclasses import dataclass
-from aio_pika import connect_robust, Message
-from aio_pika.abc import AbstractRobustConnection, AbstractRobustChannel
 
-from src.rnr.app.core.settings import Settings
+from aio_pika import Message, connect_robust
+from aio_pika.abc import AbstractRobustChannel, AbstractRobustConnection
+
 from src.rnr.app.core.cache import get_settings
+from src.rnr.app.core.settings import Settings
 
 
 @dataclass
@@ -14,12 +13,11 @@ class RabbitConnection:
     connection: AbstractRobustConnection | None = None
     channel: AbstractRobustChannel | None = None
 
-
     def status(self) -> bool:
         """
-            Checks if connection established
+        Checks if connection established
 
-            :return: True if connection established
+        :return: True if connection established
         """
         if self.connection.is_closed or self.channel.is_closed:
             return False
@@ -57,27 +55,24 @@ class RabbitConnection:
         """
         await self._clear()
 
-    async def send_message(
-            self,
-            message: list | dict,
-            routing_key: str 
-    ) -> None:
+    async def send_message(self, message: list | dict, routing_key: str) -> None:
         """
-            Public message or messages to the RabbitMQ queue.
+        Public message or messages to the RabbitMQ queue.
 
-            :param messages: list or dict with messages objects.
-            :param routing_key: Routing key of RabbitMQ, not required. Tip: the same as in the consumer.
+        :param messages: list or dict with messages objects.
+        :param routing_key: Routing key of RabbitMQ, not required. Tip: the same as in the consumer.
         """
         if not self.channel:
-            raise RuntimeError("Message could not be sent as there is no RabbitMQ Connection")
-
-        async with self.channel.transaction():
-            message = Message(
-                body=message.encode()
+            raise RuntimeError(
+                "Message could not be sent as there is no RabbitMQ Connection"
             )
 
+        async with self.channel.transaction():
+            message = Message(body=message.encode())
+
             await self.channel.default_exchange.publish(
-                message, routing_key=routing_key,
+                message,
+                routing_key=routing_key,
             )
 
 

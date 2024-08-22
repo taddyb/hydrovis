@@ -58,9 +58,9 @@ class Settings(BaseSettings):
 
     pika_url: str = "localhost"
 
-    rabbitmq_default_username: str = 'guest'
-    rabbitmq_default_password: str = 'guest'
-    rabbitmq_default_host: str = 'localhost'
+    rabbitmq_default_username: str = "guest"
+    rabbitmq_default_password: str = "guest"
+    rabbitmq_default_host: str = "localhost"
     rabbitmq_default_port: int = 5672
 
     aio_pika_url: str = "ampq://{}:{}@{}:{}/"
@@ -90,9 +90,7 @@ class Settings(BaseSettings):
             )
         except FileNotFoundError:
             self.sqlalchemy_database_url = self.sqlalchemy_database_url.format(
-                os.getenv("USER"),
-                os.getenv("PASSWORD"),
-                os.getenv("DBNAME")
+                os.getenv("USER"), os.getenv("PASSWORD"), os.getenv("DBNAME")
             )
 
         self.aio_pika_url = self.aio_pika_url.format(

@@ -1,18 +1,20 @@
 import json
 from typing import Dict
 
-import pika
 import redis
 from pydantic import ValidationError
 
-from src.rnr.app.api.client.pika import publish_error, publish_messages
 from src.rnr.app.api.services.nwps import NWPSService
 from src.rnr.app.core.cache import get_settings
 from src.rnr.app.core.exceptions import NoForecastError, NWPSAPIError
-from src.rnr.app.core.settings import Settings
-from src.rnr.app.schemas import (GaugeData, GaugeForecast, ProcessedData,
-                                 RFCDatabaseEntry)
 from src.rnr.app.core.rabbit_connection import rabbit_connection
+from src.rnr.app.core.settings import Settings
+from src.rnr.app.schemas import (
+    GaugeData,
+    GaugeForecast,
+    ProcessedData,
+    RFCDatabaseEntry,
+)
 
 _settings = get_settings()
 
@@ -63,7 +65,9 @@ class MessagePublisherService:
             message = {
                 "message": f"NWPSAPIError for reading {rfc_entry.nws_lid}: {str(e)}"
             }
-            await rabbit_connection.send_message(message=message, routing_key=settings.error_queue)
+            await rabbit_connection.send_message(
+                message=message, routing_key=settings.error_queue
+            )
             return {
                 "status": "api_error",
                 "lid": rfc_entry.nws_lid,
@@ -87,10 +91,10 @@ class MessagePublisherService:
             }
 
         except NWPSAPIError as e:
-            message = {
-                "message": f"NWPSAPIError for {rfc_entry.nws_lid}: {str(e)}"
-            }
-            await rabbit_connection.send_message(message=message, routing_key=settings.error_queue)
+            message = {"message": f"NWPSAPIError for {rfc_entry.nws_lid}: {str(e)}"}
+            await rabbit_connection.send_message(
+                message=message, routing_key=settings.error_queue
+            )
             return {
                 "status": "api_error",
                 "lid": rfc_entry.nws_lid,
@@ -114,7 +118,9 @@ class MessagePublisherService:
                 message = {
                     "message": f"Pydantic data validation error for LID: {GaugeData.lid}"
                 }
-                await rabbit_connection.send_message(message=message, routing_key=settings.error_queue)
+                await rabbit_connection.send_message(
+                    message=message, routing_key=settings.error_queue
+                )
                 return {
                     "status": "validation_error",
                     "lid": rfc_entry.nws_lid,
@@ -177,6 +183,10 @@ class MessagePublisherService:
 
         message = json.dumps(processed_data.model_dump_json())
         if is_flood_observed or is_flood_forecasted:
-            await rabbit_connection.send_message(message=message, routing_key=settings.priority_queue)
+            await rabbit_connection.send_message(
+                message=message, routing_key=settings.priority_queue
+            )
         else:
-            await rabbit_connection.send_message(message=message, routing_key=settings.base_queue)
+            await rabbit_connection.send_message(
+                message=message, routing_key=settings.base_queue
+            )
