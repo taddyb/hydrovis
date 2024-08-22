@@ -92,9 +92,6 @@ import asyncio
 import logging
 import aio_pika
 
-from config import base_config, RABBIT_URL
-from pika import message_router
-
 from src.rnr.app.api.services.replace_and_route import ReplaceAndRoute
 from src.rnr.app.core.cache import get_settings
 from src.rnr.app.core.settings import Settings
@@ -103,15 +100,20 @@ PARALLEL_TASKS = 10
 
 async def main(settings: Settings) -> None:
     connection = await aio_pika.connect_robust(settings.aio_pika_url)
+    rnr = ReplaceAndRoute()
 
     async with connection:
         channel = await connection.channel()
         await channel.set_qos(prefetch_count=PARALLEL_TASKS)
-        priority_queue = await channel.declare_queue(queue_name, auto_delete=True)
+        priority_queue = await channel.declare_queue(settings.priority_queue, durable=True,)
+        base_queue = await channel.declare_queue(settings.base_queue, durable=True,)
+        error_queue = await channel.declare_queue(settings.error_queue, durable=True,)
 
-        logging.info(consumer.STARTED)
+        print("Consumer started")
 
-        await queue.consume(message_router)
+        await priority_queue.consume(rnr.process_request)
+        await base_queue.consume(rnr.process_request)
+
 
         try:
             await asyncio.Future()

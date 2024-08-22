@@ -63,7 +63,7 @@ class MessagePublisherService:
             message = {
                 "message": f"NWPSAPIError for reading {rfc_entry.nws_lid}: {str(e)}"
             }
-            await rabbit_connection.send_messages(messages=message, routing_key=settings.error_queue)
+            await rabbit_connection.send_message(message=message, routing_key=settings.error_queue)
             return {
                 "status": "api_error",
                 "lid": rfc_entry.nws_lid,
@@ -90,7 +90,7 @@ class MessagePublisherService:
             message = {
                 "message": f"NWPSAPIError for {rfc_entry.nws_lid}: {str(e)}"
             }
-            await rabbit_connection.send_messages(messages=message, routing_key=settings.error_queue)
+            await rabbit_connection.send_message(message=message, routing_key=settings.error_queue)
             return {
                 "status": "api_error",
                 "lid": rfc_entry.nws_lid,
@@ -114,7 +114,7 @@ class MessagePublisherService:
                 message = {
                     "message": f"Pydantic data validation error for LID: {GaugeData.lid}"
                 }
-                await rabbit_connection.send_messages(messages=message, routing_key=settings.error_queue)
+                await rabbit_connection.send_message(message=message, routing_key=settings.error_queue)
                 return {
                     "status": "validation_error",
                     "lid": rfc_entry.nws_lid,
@@ -177,6 +177,6 @@ class MessagePublisherService:
 
         message = json.dumps(processed_data.model_dump_json())
         if is_flood_observed or is_flood_forecasted:
-            await rabbit_connection.send_messages(messages=message, routing_key=settings.priority_queue)
+            await rabbit_connection.send_message(message=message, routing_key=settings.priority_queue)
         else:
-            await rabbit_connection.send_messages(messages=message, routing_key=settings.base_queue)
+            await rabbit_connection.send_message(message=message, routing_key=settings.base_queue)

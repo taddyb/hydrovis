@@ -100,8 +100,8 @@ async def publish_messages(
         - summary: Summary of processing results
         - results: Detailed results for each RFC entry
     """
-    connection = start_connection(settings.pika_url)
-    channel = start_work_queues(connection, settings)
+    # connection = start_connection(settings.pika_url)
+    # channel = start_work_queues(connection, settings)
     rfc_entries = RFCReaderService.get_rfc_data(
         db
     ).entries  # An RFCDatabaseEntries obj is always returned
@@ -112,14 +112,11 @@ async def publish_messages(
 
     async def limited_process(entry):
         async with limiter:
-            return await MessagePublisherService.process_rfc_entry(
-                entry, channel, settings
-            )
+            return await MessagePublisherService.process_rfc_entry(entry, settings)
 
     tasks = [limited_process(rfc_entry) for rfc_entry in rfc_entries]
     results = await asyncio.gather(*tasks)
 
-    close_connection(connection)
     summary = Summary(
         total=len(results),
         success=sum(1 for r in results if r.get("status") == "success"),

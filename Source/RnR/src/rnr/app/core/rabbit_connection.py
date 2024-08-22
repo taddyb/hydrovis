@@ -57,9 +57,9 @@ class RabbitConnection:
         """
         await self._clear()
 
-    async def send_messages(
+    async def send_message(
             self,
-            messages: list | dict,
+            message: list | dict,
             routing_key: str 
     ) -> None:
         """
@@ -71,18 +71,14 @@ class RabbitConnection:
         if not self.channel:
             raise RuntimeError("Message could not be sent as there is no RabbitMQ Connection")
 
-        if isinstance(messages, dict):
-            messages = [messages]
-
         async with self.channel.transaction():
-            for message in messages:
-                message = Message(
-                    body=json.dumps(message).encode()
-                )
+            message = Message(
+                body=message.encode()
+            )
 
-                await self.channel.default_exchange.publish(
-                    message, routing_key=routing_key,
-                )
+            await self.channel.default_exchange.publish(
+                message, routing_key=routing_key,
+            )
 
 
 rabbit_connection = RabbitConnection(get_settings())

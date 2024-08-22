@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
+from aio_pika.abc import AbstractIncomingMessage
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -22,8 +23,8 @@ class ReplaceAndRoute:
     This is the service for your T-Route data formatting
     """
 
-    def read_message(self, body: str) -> Dict[str, Any]:
-        message_string = body.decode()
+    def read_message(self, message: str) -> Dict[str, Any]:
+        message_string = message.body.decode()
         json_start = message_string.find("{")
         json_end = message_string.rfind("}")
         json_string = message_string[json_start : json_end + 1].replace("\\", "")
@@ -110,9 +111,11 @@ class ReplaceAndRoute:
             )
         return {"status": "OK", "domain_files": domain_files}
 
-    def process_request(self, ch, method, properties, body):
-        print(body)
-        json_data = self.read_message(body)
+    async def process_request(
+            self, 
+            message: AbstractIncomingMessage
+        ):
+        json_data = self.read_message(message)
         lid = json_data["lid"]
         feature_id = json_data["feature_id"]
         output_forcing_path = settings.csv_forcing_path
@@ -137,7 +140,7 @@ class ReplaceAndRoute:
         else:
             print(f"STATUS: {domain_files_json['status']}: {domain_files_json['msg']}")
 
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+        await message.ack()
 
     def map_feature_id(self, feature_id: str, lid: str, _r_cache, gpkg_file) -> str:
         if gpkg_file.exists():
