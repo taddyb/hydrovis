@@ -42,7 +42,9 @@ colorama==0.4.6
     #   griffe
     #   mkdocs-material
 exceptiongroup==1.2.2
-    # via anyio
+    # via
+    #   anyio
+    #   pytest
 fastapi==0.110.1
     # via rnr (pyproject.toml)
 fiona==1.9.6
@@ -71,6 +73,8 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
+iniconfig==2.0.0
+    # via pytest
 isort==4.3.21
     # via rnr (pyproject.toml)
 jinja2==3.1.4
@@ -126,6 +130,7 @@ packaging==24.1
     #   geoalchemy2
     #   geopandas
     #   mkdocs
+    #   pytest
     #   xarray
 paginate==0.5.6
     # via mkdocs-material
@@ -144,6 +149,8 @@ platformdirs==4.2.2
     # via
     #   mkdocs-get-deps
     #   mkdocstrings
+pluggy==1.5.0
+    # via pytest
 psycopg2-binary==2.9.6
     # via rnr (pyproject.toml)
 pyarrow==15.0.0
@@ -165,6 +172,12 @@ pymdown-extensions==10.9
     #   mkdocstrings
 pyproj==3.6.1
     # via geopandas
+pytest==8.3.2
+    # via
+    #   rnr (pyproject.toml)
+    #   pytest-asyncio
+pytest-asyncio==0.23.8
+    # via rnr (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via
     #   ghp-import
@@ -203,6 +216,8 @@ sqlalchemy==2.0.31
     #   geoalchemy2
 starlette==0.37.2
     # via fastapi
+tomli==2.0.1
+    # via pytest
 typing-extensions==4.12.2
     # via
     #   anyio
