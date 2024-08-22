@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any, Dict, List, Union
 
 from aio_pika import Message, connect_robust
 from aio_pika.abc import AbstractRobustChannel, AbstractRobustConnection
@@ -10,8 +11,8 @@ from src.rnr.app.core.settings import Settings
 @dataclass
 class RabbitConnection:
     settings: Settings
-    connection: AbstractRobustConnection | None = None
-    channel: AbstractRobustChannel | None = None
+    connection: Union[AbstractRobustConnection, None] = None
+    channel: Union[AbstractRobustChannel, None] = None
 
     def status(self) -> bool:
         """
@@ -55,7 +56,7 @@ class RabbitConnection:
         """
         await self._clear()
 
-    async def send_message(self, message: list | dict, routing_key: str) -> None:
+    async def send_message(self, message: Union[List[Any], Dict[str, Any]], routing_key: str) -> None:
         """
         Public message or messages to the RabbitMQ queue.
 
