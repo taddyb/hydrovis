@@ -72,7 +72,19 @@ class Settings(BaseSettings):
     priority_queue: str = "flooded_data_queue"
     base_queue: str = "non_flooded_data_queue"
     error_queue: str = "error_queue"
+
+    processed_format = 'replace_route.t{0:>02s}z.medium_range.channel_rt.f{1:03d}.{2}.nc'
+    processed_output_forma = 'nwc.{0}'
+    forcing_regex: str = '\d{12}\.CHRTOUT_DOMAIN1'
+    hydro_rst_datetime_format: str = '%Y-%m-%d_%H:00'
+    # forecast_output = f'replace_route/{ana_datetime_str[:-4]}/forecasts/{ana_datetime_str[-4:-2]}Z_run_issue_times.csv'
+    # troute_output = f'replace_route/{ana_datetime_str[:-4]}/wrf_hydro/{os.path.basename(f)}'
+    forecast_output: str = 'replace_route/{}/forecasts/{}Z_run_issue_times.csv'
+    troute_output: str = 'replace_route/{}/wrf_hydro/{}'
+
+
     model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
+
 
     def __init__(self, **data):
         super(Settings, self).__init__(**data)

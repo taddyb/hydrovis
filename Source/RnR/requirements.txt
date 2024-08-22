@@ -41,6 +41,10 @@ colorama==0.4.6
     # via
     #   griffe
     #   mkdocs-material
+contourpy==1.2.1
+    # via matplotlib
+cycler==0.12.1
+    # via matplotlib
 exceptiongroup==1.2.2
     # via
     #   anyio
@@ -49,6 +53,8 @@ fastapi==0.110.1
     # via rnr (pyproject.toml)
 fiona==1.9.6
     # via geopandas
+fonttools==4.53.1
+    # via matplotlib
 geoalchemy2==0.15.2
     # via rnr (pyproject.toml)
 geopandas==0.14.3
@@ -82,6 +88,8 @@ jinja2==3.1.4
     #   mkdocs
     #   mkdocs-material
     #   mkdocstrings
+kiwisolver==1.4.5
+    # via matplotlib
 markdown==3.6
     # via
     #   mkdocs
@@ -95,6 +103,8 @@ markupsafe==2.1.5
     #   mkdocs
     #   mkdocs-autorefs
     #   mkdocstrings
+matplotlib==3.9.2
+    # via rnr (pyproject.toml)
 mergedeep==1.3.4
     # via
     #   mkdocs
@@ -121,6 +131,8 @@ multidict==6.0.5
 numpy==1.24.3
     # via
     #   rnr (pyproject.toml)
+    #   contourpy
+    #   matplotlib
     #   pandas
     #   pyarrow
     #   shapely
@@ -129,6 +141,7 @@ packaging==24.1
     # via
     #   geoalchemy2
     #   geopandas
+    #   matplotlib
     #   mkdocs
     #   pytest
     #   xarray
@@ -145,6 +158,8 @@ pathspec==0.12.1
     # via mkdocs
 pika==1.3.2
     # via rnr (pyproject.toml)
+pillow==10.4.0
+    # via matplotlib
 platformdirs==4.2.2
     # via
     #   mkdocs-get-deps
@@ -170,6 +185,8 @@ pymdown-extensions==10.9
     # via
     #   mkdocs-material
     #   mkdocstrings
+pyparsing==3.1.2
+    # via matplotlib
 pyproj==3.6.1
     # via geopandas
 pytest==8.3.2
@@ -181,6 +198,7 @@ pytest-asyncio==0.23.8
 python-dateutil==2.9.0.post0
     # via
     #   ghp-import
+    #   matplotlib
     #   pandas
 python-dotenv==1.0.1
     # via pydantic-settings

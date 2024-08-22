@@ -55,3 +55,11 @@ def test_create_troute_domains(tmp_path, sample_rfc_forecast):
         df[dt].values[0] == domain_file["secondary_forecast"]
     ), "secondary forecast not correctly written"
     assert dt == "202408211800", "datetime incorrect"
+
+
+def test_troute(sample_rfc_forecast, feature_id: int = 2930769, lid: str = "CAGM7"):
+    rnr.troute(
+        lid,
+        feature_id,
+        sample_rfc_forecast
+    )

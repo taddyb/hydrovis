@@ -11,6 +11,7 @@ import redis
 from aio_pika.abc import AbstractIncomingMessage
 
 from src.rnr.app.core.cache import get_settings
+from src.rnr.app.api.client.troute import run_troute
 from src.rnr.app.core.exceptions import ManyToOneError
 
 settings = get_settings()
@@ -137,7 +138,30 @@ class ReplaceAndRoute:
         else:
             print(f"STATUS: {domain_files_json['status']}: {domain_files_json['msg']}")
 
+        troute_response = self.troute(lid, feature_id, json_data)
+        self.post_process(json_data, troute_response)
+
         await message.ack()
+
+    def post_process(self, json_data: Dict[str, Any], troute_reponse: Dict[str, Any]):
+        
+
+    def troute(self, lid: str, feature_id: str, json_data: Dict[str, Any]):
+        unique_dates = set()
+        for time_str in json_data["times"]:
+            date = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S")
+            unique_dates.add(date.date())
+
+        num_forecast_days = len(unique_dates) - 1 # the set ending is inclusive, we want exclusive
+
+        response = run_troute(
+            lid=lid,
+            feature_id=feature_id,
+            start_time=json_data["times"][0],
+            num_forecast_days=num_forecast_days,
+            base_url=settings.base_troute_url
+        )
+        return response
 
     def map_feature_id(self, feature_id: str, lid: str, _r_cache, gpkg_file) -> str:
         if gpkg_file.exists():
