@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Any, Dict
 
-import os, sys
 import pandas as pd
+import pytest
 
 from src.rnr.app.api.services.replace_and_route import ReplaceAndRoute
 
@@ -61,18 +61,34 @@ def test_create_troute_domains(tmp_path, sample_rfc_forecast):
     assert dt == "202408211800", "datetime incorrect"
 
 
-<<<<<<< HEAD
 def test_troute(sample_rfc_forecast, feature_id: int = 2930769, lid: str = "CAGM7"):
-    rnr.troute(
-        lid,
-        feature_id,
-        sample_rfc_forecast
+    try:
+        response = rnr.troute(
+            lid,
+            feature_id,
+            sample_rfc_forecast
+        )
+    except Exception:
+        pytest.skip("Can't test troute as docker compose is not up.")
+    assert isinstance(response, dict)
+
+
+def test_post_processing(sample_rfc_forecast):
+    mapped_feature_id = 1074884
+    troute_output_dir = Path(__file__).parent.parent / "data/troute_output/{}/troute_output_{}.nc"
+    rnr_output_dir = Path(__file__).parent.parent / "output/replace_and_route/{}/replace_route.t{}z.medium_range.channel_rt.nc"
+    rnr.post_process(
+        sample_rfc_forecast, 
+        mapped_feature_id, 
+        is_flooding=False,
+        t_route_file_dir=troute_output_dir.__str__(),
+        rnr_output_dir=rnr_output_dir.__str__()
     )
-=======
+
+
 def test_create_plot_and_rnr_files(sample_rfc_forecast):
     json_data = sample_rfc_forecast
     mapped_feature_id = 1074884
     plot_and_rnr_files_json = rnr.create_plot_and_rnr_files(json_data["lid"], mapped_feature_id, json_data, settings.plot_path, settings.rnr_output_path)
     assert plot_and_rnr_files_json["status"] == "OK"
     print(plot_and_rnr_files_json)
->>>>>>> 27ed9ee44e00c18ae66e1c50dfd49fcaab201852
