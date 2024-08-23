@@ -363,6 +363,8 @@ def sample_rfc_forecast() -> Dict[str, str]:
             15.3,
             15.3,
         ],
+        "latest_observation": 2690,
+        "latest_obs_units": "m3 s-1",
         "primary_unit": "ft",
         "secondary_name": "Flow",
         "secondary_forecast": [

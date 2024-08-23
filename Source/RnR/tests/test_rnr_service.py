@@ -63,21 +63,19 @@ def test_create_troute_domains(tmp_path, sample_rfc_forecast):
 
 
 def test_troute(sample_rfc_forecast, feature_id: int = 2930769, lid: str = "CAGM7"):
-    try:
-        response = rnr.troute(
-            lid,
-            feature_id,
-            sample_rfc_forecast
-        )
-    except Exception:
-        pytest.skip("Can't test troute as docker compose is not up.")
+    response = rnr.troute(
+        lid,
+
+        feature_id,
+        sample_rfc_forecast
+    )
     assert isinstance(response, dict)
 
 
-def test_post_processing(tmp_dir, sample_rfc_forecast):
+def test_post_processing(tmp_path, sample_rfc_forecast):
     mapped_feature_id = 1074884
     troute_output_dir = Path(__file__).parent.absolute() / "test_data/troute_output/{}/troute_output_{}.nc"
-    rnr_output_dir = tmp_dir / "data/replace_and_route/{}/"
+    rnr_output_dir = tmp_path / "data/replace_and_route/{}/"
     response = rnr.post_process(
         sample_rfc_forecast, 
         mapped_feature_id, 

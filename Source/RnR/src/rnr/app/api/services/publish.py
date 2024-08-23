@@ -174,6 +174,8 @@ class MessagePublisherService:
             timeZone=gauge_data.timeZone,
             latitude=gauge_data.latitude,
             longitude=gauge_data.longitude,
+            latest_observation=gauge_data.latest_observation,
+            latest_obs_units=gauge_data.latest_obs_units,
             status=gauge_data.status,
             times=gauge_forecast.times,
             primary_name=gauge_forecast.primary_name,

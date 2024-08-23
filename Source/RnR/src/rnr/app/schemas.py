@@ -888,16 +888,21 @@ class GaugeForecast(BaseModel):
         Unit of measurement for primary forecast.
     secondary_name : str
         Name of the secondary forecast parameter.
+    latest_obervation: List[float]
+        The latest observation from NWPS
+    latest_obs_units: str
+        The latest observation units
     secondary_forecast : List[float]
         List of secondary forecast values.
     secondary_unit : str
         Unit of measurement for secondary forecast.
     """
-
     times: List[datetime]
     primary_name: str
     primary_forecast: List[float]
     primary_unit: str
+    latest_observation: List[float]
+    latest_obs_units: str
     secondary_name: str
     secondary_forecast: List[float]
     secondary_unit: str

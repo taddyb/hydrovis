@@ -247,7 +247,11 @@ class ReplaceAndRoute:
         else:
             print(f"STATUS: {domain_files_json['status']}: {domain_files_json['msg']}")
 		
-        troute_response = self.troute(lid, feature_id, json_data)
+        if json_data["latest_observation"] is not None:
+            initial_start = json_data["latest_observation"]
+        else:
+            initial_start = json_data["secondary_forecast"][0]  # Using t0 as initial start since no obs
+        troute_response = self.troute(lid, feature_id, mapped_feature_id, initial_start, json_data)  # Using feature_id to reference the gpkg file
 
         # DAVID TODO this is not working and the FAKE data needs to be removed
         # plot_file_json = self.create_plot_and_rnr_files(lid, mapped_feature_id, json_data, settings.plot_path,  settings.rnr_output_path)
@@ -325,7 +329,7 @@ class ReplaceAndRoute:
         return {"status": "OK"}
             
 
-    def troute(self, lid: str, feature_id: str, json_data: Dict[str, Any]):
+    def troute(self, lid: str, mapped_feature_id: str, feature_id: str, initial_start: float, json_data: Dict[str, Any]):
         unique_dates = set()
         for time_str in json_data["times"]:
             date = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S")
@@ -336,6 +340,8 @@ class ReplaceAndRoute:
         response = run_troute(
             lid=lid,
             feature_id=feature_id,
+            mapped_feature_id=mapped_feature_id,
+            initial_start=initial_start,
             start_time=json_data["times"][0],
             num_forecast_days=num_forecast_days,
             base_url=settings.base_troute_url
