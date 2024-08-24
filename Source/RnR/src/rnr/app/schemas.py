@@ -972,6 +972,8 @@ class ProcessedData(BaseModel):
     downstream_lid: str
     usgs_id: str
     feature_id: Optional[int]
+    latest_observation: Union[List[float], None]
+    latest_obs_units: str
     reach_id: str
     name: str
     rfc: RFC

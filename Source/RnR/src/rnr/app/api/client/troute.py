@@ -45,7 +45,7 @@ def run_troute(
     num_forecast_days: int,
     base_url: str
 ) -> Dict[str, Any]:
-    endpoint = f"{base_url}/v4/flow_routing/"
+    endpoint = f"{base_url}/flow_routing/v4/"
     params = {
         "lid": lid,
         "feature_id": feature_id,

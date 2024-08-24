@@ -143,7 +143,13 @@ class ReplaceAndRoute:
         feature_id = json_data["feature_id"]
         output_forcing_path = settings.csv_forcing_path
         subset_gpkg_file = Path(settings.domain_path.format(feature_id))
-        mapped_feature_id = self.map_feature_id(feature_id, lid, r_cache, subset_gpkg_file)
+        try:
+            mapped_feature_id = self.map_feature_id(feature_id, lid, r_cache, subset_gpkg_file)
+        except Exception as e:
+            print(f"Cannot find reference fabric for ID: {feature_id}. {e.__str__()}")
+            await message.ack()
+            return
+
         domain_files_json = self.create_troute_domains(
             mapped_feature_id, json_data, output_forcing_path
         )
@@ -167,16 +173,26 @@ class ReplaceAndRoute:
             initial_start = json_data["latest_observation"]
         else:
             initial_start = json_data["secondary_forecast"][0]  # Using t0 as initial start since no obs
-        troute_response = self.troute(lid, feature_id, mapped_feature_id, initial_start, json_data)  # Using feature_id to reference the gpkg file
 
-        plot_file_json = self.create_plot_file(json_data, mapped_feature_id)
+        try:
+            _ = self.troute(
+                lid=lid, 
+                mapped_feature_id=mapped_feature_id,
+                feature_id=feature_id, 
+                initial_start=initial_start, 
+                json_data=json_data
+            )  # Using feature_id to reference the gpkg file
+        except Exception as e:
+            print(f"Error using T-Route: {feature_id}. {e.__str__()}")
+            await message.ack()
 
+        plot_file_json = self.create_plot_file(json_data=json_data, mapped_feature_id=mapped_feature_id)
     
         self.post_process(json_data, mapped_feature_id, is_flooding)
 
         if plot_file_json["status"] == "OK":
             print(" [x] Plot file created:")
-            print("   - " + plot_file_json['file_location'])
+            print(f"Plot Location: {plot_file_json['plot_file_location']}")
 
         await message.ack()
 
@@ -245,7 +261,14 @@ class ReplaceAndRoute:
         return {"status": "OK"}
             
 
-    def troute(self, lid: str, mapped_feature_id: str, feature_id: str, initial_start: float, json_data: Dict[str, Any]):
+    def troute(
+        self, 
+        lid: str, 
+        mapped_feature_id: str, 
+        feature_id: str, 
+        initial_start: float, 
+        json_data: Dict[str, Any]
+    ):
         unique_dates = set()
         for time_str in json_data["times"]:
             date = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S")
@@ -297,19 +320,18 @@ class ReplaceAndRoute:
         dataset_names = [troute_file_dir.format(json_data["lid"], timestamp) for timestamp in formatted_timestamps]
         for idx, file_name in enumerate(dataset_names):
             ds = xr.open_dataset(file_name, engine="netcdf4").copy(deep=True)
-            troute_flow.append(ds.sel(feature_id=mapped_feature_id).flow.values[0])
+            troute_flow.append(ds.sel(feature_id=int(mapped_feature_id)).flow.values[0])
             troute_time_delta.append(datetime.strptime(Path(file_name).stem.split("_")[-1], "%Y%m%d%H%M"))
 
         troute_flow_cfs = [float(flow_value) * 35.3147 for flow_value in troute_flow]  # converting to cfs
 
-        plot_file_name = "RFC_plot_output_" + json_data["lid"] + "_"
         dt_start_formatted = message_time_delta[0].strftime("%Y%m%d")
         dt_end_formatted = message_time_delta[-1].strftime("%Y%m%d")
-        if dt_start_formatted != dt_end_formatted:
-            plot_file_name += dt_start_formatted + "_"
-        plot_file_name += dt_end_formatted + ".png"
-        plot_file_dir = Path(os.path.join(plot_dir, json_data["lid"]))
-        plot_file_location = Path(os.path.join(plot_dir, json_data["lid"], plot_file_name))
+        # if dt_start_formatted != dt_end_formatted:
+        #     plot_file_name += dt_start_formatted + "_"
+        plot_file_name = f"RFC_plot_output_{json_data['lid']}_{dt_start_formatted}_{dt_end_formatted}.png"
+        plot_file_dir = Path(plot_dir.format(json_data["lid"]))
+        plot_file_location = plot_file_dir / plot_file_name
 
         plt.plot(troute_time_delta, troute_flow_cfs, c="k", label="LowerColorado Test NHDPlus")
         plt.plot(message_time_delta, message_flow_cfs, c="tab:blue", label=f"{json_data['lid']} Routed Flow")
@@ -317,8 +339,7 @@ class ReplaceAndRoute:
         plt.ylabel("discharge cfs")
         plt.legend()
 
-        if not os.path.exists(plot_file_dir):
-            os.makedirs(plot_file_dir)
+        plot_file_dir.mkdir(exist_ok=True)
         plt.savefig(plot_file_location)
 
         return {
