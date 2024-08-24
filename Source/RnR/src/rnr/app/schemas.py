@@ -897,6 +897,7 @@ class GaugeForecast(BaseModel):
     secondary_unit : str
         Unit of measurement for secondary forecast.
     """
+
     times: List[datetime]
     primary_name: str
     primary_forecast: List[float]

@@ -63,7 +63,9 @@ class MessagePublisherService:
         """
         try:
             gauge_data = await NWPSService.get_gauge_data(rfc_entry.nws_lid, settings)
-            rfc_ds_entry = RFCReaderService.get_rfc_data(db, identifier=gauge_data.downstreamLid).entries[0] 
+            rfc_ds_entry = RFCReaderService.get_rfc_data(
+                db, identifier=gauge_data.downstreamLid
+            ).entries[0]
         except NWPSAPIError as e:
             message = {
                 "message": f"NWPSAPIError for reading {rfc_entry.nws_lid}: {str(e)}"
@@ -114,11 +116,11 @@ class MessagePublisherService:
         ):
             try:
                 await MessagePublisherService.process_and_publish_messages(
-                    gauge_data=gauge_data, 
-                    gauge_forecast=gauge_forecast, 
+                    gauge_data=gauge_data,
+                    gauge_forecast=gauge_forecast,
                     rfc_entry=rfc_entry,
                     rfc_ds_entry=rfc_ds_entry,
-                    settings=settings
+                    settings=settings,
                 )
             except ValidationError as e:
                 message = {
