@@ -143,8 +143,15 @@ class ReplaceAndRoute:
         feature_id = json_data["feature_id"]
         output_forcing_path = settings.csv_forcing_path
         subset_gpkg_file = Path(settings.domain_path.format(feature_id))
+        downstream_gpkg_file = Path(settings.downstream_domain_path.format(feature_id))
         try:
             mapped_feature_id = self.map_feature_id(feature_id, lid, r_cache, subset_gpkg_file)
+        except Exception as e:
+            print(f"Cannot find reference fabric for ID: {feature_id}. {e.__str__()}")
+            await message.ack()
+            return
+        try:
+            mapped_ds_feature_id = self.map_feature_id(json_data["downstream_feature_id"], lid, r_cache, downstream_gpkg_file)
         except Exception as e:
             print(f"Cannot find reference fabric for ID: {feature_id}. {e.__str__()}")
             await message.ack()
@@ -186,7 +193,7 @@ class ReplaceAndRoute:
             print(f"Error using T-Route: {feature_id}. {e.__str__()}")
             await message.ack()
 
-        plot_file_json = self.create_plot_file(json_data=json_data, mapped_feature_id=mapped_feature_id)
+        plot_file_json = self.create_plot_file(json_data=json_data, mapped_feature_id=mapped_feature_id, mapped_ds_feature_id=mapped_ds_feature_id)
     
         self.post_process(json_data, mapped_feature_id, is_flooding)
 
@@ -288,13 +295,13 @@ class ReplaceAndRoute:
         return response
     
     def create_plot_file(
-            self, 
-            json_data: Dict[str, Any], 
-            mapped_feature_id: int, 
-            troute_file_dir: str = settings.troute_output_format, 
-            plot_dir: str = settings.plot_path
-        ):
-        
+        self, 
+        json_data: Dict[str, Any], 
+        mapped_feature_id: int, 
+        mapped_ds_feature_id: int,
+        troute_file_dir: str = settings.troute_output_format, 
+        plot_dir: str = settings.plot_path
+    ):
         try:
             t0 = datetime.strptime(json_data["times"][0], "%Y-%m-%dT%H:%M:%SZ")
             t_n = datetime.strptime(json_data["times"][-1], "%Y-%m-%dT%H:%M:%SZ")
@@ -305,8 +312,8 @@ class ReplaceAndRoute:
             t_n = datetime.strptime(json_data["times"][-1], "%Y-%m-%dT%H:%M:%S")
             json_data["formatted_times"] = [datetime.strptime(time, "%Y-%m-%dT%H:%M:%S") for time in json_data["times"]]
 
-        message_time_delta = json_data["formatted_times"]
-        message_flow_cfs = [float(flow_value) * 35.3147 for flow_value in json_data['secondary_forecast']]  # converting to cfs
+        rfc_forecast_time_delta = json_data["formatted_times"]
+        rfc_forecast_cfs = [float(flow_value) * 35.3147 for flow_value in json_data['secondary_forecast']]  # converting to cfs
 
         formatted_timestamps = []
         t = t0
@@ -317,30 +324,50 @@ class ReplaceAndRoute:
         
         troute_flow = []
         troute_time_delta = []
+        troute_ds_flow = []
         dataset_names = [troute_file_dir.format(json_data["lid"], timestamp) for timestamp in formatted_timestamps]
-        for idx, file_name in enumerate(dataset_names):
-            ds = xr.open_dataset(file_name, engine="netcdf4").copy(deep=True)
+        for file_name in dataset_names:
+            ds = xr.open_dataset(file_name, engine="netcdf4")
             troute_flow.append(ds.sel(feature_id=int(mapped_feature_id)).flow.values[0])
+            troute_ds_flow.append(ds.sel(feature_id=int(mapped_ds_feature_id)).flow.values[0])
             troute_time_delta.append(datetime.strptime(Path(file_name).stem.split("_")[-1], "%Y%m%d%H%M"))
+            ds.close()
 
         troute_flow_cfs = [float(flow_value) * 35.3147 for flow_value in troute_flow]  # converting to cfs
+        troute_ds_flow_cfs = [float(flow_value) * 35.3147 for flow_value in troute_ds_flow]  # converting to cfs
 
-        dt_start_formatted = message_time_delta[0].strftime("%Y%m%d")
-        dt_end_formatted = message_time_delta[-1].strftime("%Y%m%d")
+        dt_start_formatted = rfc_forecast_time_delta[0].strftime("%Y%m%d")
+        dt_end_formatted = rfc_forecast_time_delta[-1].strftime("%Y%m%d")
         # if dt_start_formatted != dt_end_formatted:
         #     plot_file_name += dt_start_formatted + "_"
         plot_file_name = f"RFC_plot_output_{json_data['lid']}_{dt_start_formatted}_{dt_end_formatted}.png"
         plot_file_dir = Path(plot_dir.format(json_data["lid"]))
         plot_file_location = plot_file_dir / plot_file_name
 
-        plt.plot(troute_time_delta, troute_flow_cfs, c="k", label="LowerColorado Test NHDPlus")
-        plt.plot(message_time_delta, message_flow_cfs, c="tab:blue", label=f"{json_data['lid']} Routed Flow")
-        plt.xlabel("timedelta64[ns]")
-        plt.ylabel("discharge cfs")
-        plt.legend()
+        # plt.plot(troute_time_delta, troute_flow_cfs, c="k", label="LowerColorado Test NHDPlus")
+        # plt.plot(message_time_delta, message_flow_cfs, c="tab:blue", label=f"{json_data['lid']} Routed Flow")
+        # plt.xlabel("timedelta64[ns]")
+        # plt.ylabel("discharge cfs")
+        # plt.legend()
 
+        fig, ax = plt.subplots(1, 1, figsize=(16, 8), sharex=True)
+
+        # Plot on the first subplot
+        ax.scatter(rfc_forecast_time_delta, rfc_forecast_cfs, c="k", label=f"RFC {json_data['lid']} Forecasted flows")
+        ax.set_title(f"Comparing RFC forecast to outputted T-Route flows at {json_data['lid']}")
+
+        # Plot on the second subplot
+        ax.plot(troute_time_delta, troute_flow_cfs, c="blue", label="Upstream T-Routed Output at RFC point")
+        ax.plot(troute_time_delta, troute_ds_flow_cfs, c="tab:blue", label="Downstream T-Routed Output")
+        ax.set_xlabel("Time (Hours)")
+        ax.set_ylabel(r"discharge $f^3/s$")
+        ax.legend()
+
+        # Adjust layout to prevent overlap
+        plt.tight_layout()
         plot_file_dir.mkdir(exist_ok=True)
         plt.savefig(plot_file_location)
+        plt.close(fig)
 
         return {
             'status': 'OK',

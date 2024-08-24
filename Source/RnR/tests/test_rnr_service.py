@@ -93,11 +93,13 @@ def test_post_processing(sample_rfc_forecast):
 
 def test_create_plot_file(sample_rfc_forecast):
     mapped_feature_id = 1074884
+    mapped_ds_id = 1060390
     troute_output_dir = Path(__file__).parent.absolute() / "test_data/troute_output/{}/troute_output_{}.nc"
     plot_output_dir = Path(__file__).parent.absolute() / "test_data/plots/"
     response = rnr.create_plot_file(
-        sample_rfc_forecast, 
-        mapped_feature_id, 
+        json_data=sample_rfc_forecast, 
+        mapped_feature_id=mapped_feature_id, 
+        mapped_ds_feature_id=mapped_ds_id,
         troute_file_dir=troute_output_dir.__str__(),
         plot_dir=plot_output_dir.__str__()
     )
