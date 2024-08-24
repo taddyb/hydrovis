@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 import pandas as pd
 import pytest
+import httpx
 
 from src.rnr.app.api.services.replace_and_route import ReplaceAndRoute
 
@@ -63,16 +64,16 @@ def test_create_troute_domains(tmp_path, sample_rfc_forecast):
 
 
 def test_troute(sample_rfc_forecast, feature_id: int = 2930769, mapped_feature_id = 1074884, initial_start: float = 0.0, lid: str = "CAGM7"):
-    # try:
-    response = rnr.troute(
-        lid,
-        mapped_feature_id,
-        feature_id,
-        initial_start,
-        sample_rfc_forecast
-    )
-    # except Exception:  # TODO make this more specific
-        # pytest.skip("Skipping test. Docker is not")
+    try:
+        response = rnr.troute(
+            lid,
+            mapped_feature_id,
+            feature_id,
+            initial_start,
+            sample_rfc_forecast
+        )
+    except httpx.ConnectError: 
+        pytest.skip("Skipping test. Docker is not")
     assert isinstance(response, dict)
 
 
