@@ -6,8 +6,21 @@ import pytest
 
 from src.rnr.app.api.services.replace_and_route import ReplaceAndRoute
 from src.rnr.app.core.cache import get_settings
+from src.rnr.app.core.settings import Settings
 
-settings = get_settings()
+def get_settings_override() -> Settings:
+    """Overriding the BaseSettings for testing
+
+    Returns
+    -------
+    Settings
+        The test settings
+    """
+    return Settings(
+        log_path="./logs/"
+    )
+
+settings = get_settings_override()
 
 rnr = ReplaceAndRoute()
 
