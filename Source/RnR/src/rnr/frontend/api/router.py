@@ -89,7 +89,7 @@ async def get_csv_data_download(
     return FileResponse(path=zip_file_name, filename=zip_file_name)
 
 @frontend_router.get("/plot/", response_class=HTMLResponse)
-async def plot_data(request: Request):
+async def lid_data(request: Request):
     """ A route to display the available LIDs for searching plot data
     
     Parameters
@@ -106,7 +106,7 @@ async def plot_data(request: Request):
     )
 
 @frontend_router.get("/plot/{lid}/", response_class=HTMLResponse)
-async def lid_data(request: Request, lid: str, start_date: str = datetime.now().strftime("%Y-%m-%d"), end_date: str = ''):
+async def plot_data(request: Request, lid: str, start_date: str = datetime.now().strftime("%Y-%m-%d"), end_date: str = ''):
     """ A route to display/search the plot data
 
     Parameters
