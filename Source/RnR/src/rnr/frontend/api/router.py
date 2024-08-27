@@ -129,7 +129,7 @@ async def plot_data(request: Request, lid: str, start_date: str = datetime.now()
 
     if 'errors' in context and 'lid' in context['errors']:
         return RedirectResponse(url="../")
-
+    
     return templates.TemplateResponse(
         request=request, name="plot_data.html", context=context
     )

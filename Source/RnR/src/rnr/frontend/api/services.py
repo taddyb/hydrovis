@@ -211,7 +211,7 @@ class DataSearchService:
         }
 
         plot_search_context["lid"] = lid
-
+        
         plot_search_context["errors"] = {}
 
         plot_lids = [
