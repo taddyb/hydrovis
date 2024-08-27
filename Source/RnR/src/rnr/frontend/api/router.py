@@ -106,7 +106,7 @@ async def plot_data(request: Request):
     )
 
 @frontend_router.get("/plot/{lid}/", response_class=HTMLResponse)
-async def plot_data(request: Request, lid: str, start_date: str = datetime.now().strftime("%Y-%m-%d"), end_date: str = ''):
+async def lid_data(request: Request, lid: str, start_date: str = datetime.now().strftime("%Y-%m-%d"), end_date: str = ''):
     """ A route to display/search the plot data
 
     Parameters
