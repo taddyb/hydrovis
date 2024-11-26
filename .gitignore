@@ -64,8 +64,7 @@ Source/RnR/dist
 Source/RnR/notebooks/historical_flood_event
 Source/RnR/.Trash*
 
-*.ruff_cache
-*.pytest_cache
+*cache
 
 *.pyc
 *.egg-info/
