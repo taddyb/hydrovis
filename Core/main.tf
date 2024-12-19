@@ -751,5 +751,6 @@ module "testing" {
   environment                 = local.env.environment
   s3_module                   = module.s3
   lambda_module               = module.viz-lambda-functions
-  step_function_module        = module.viz-step-functions
+  role                        = module.iam-roles.role_viz_pipeline.arn
+  deployment_bucket           = module.s3.buckets["deployment"].bucket
 }

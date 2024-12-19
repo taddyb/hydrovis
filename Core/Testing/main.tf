@@ -19,8 +19,11 @@ variable "lambda_module" {
   type = any
 }
 
-variable "step_function_module" {
-  type = any
+variable "role" {
+  type        = string
+}
+variable "deployment_bucket" {
+  type        = string
 }
 
 locals {
@@ -81,20 +84,11 @@ resource "aws_cloudwatch_event_target" "trigger_pipeline_test_run" {
   }
 }
 
-##################################
-###### KICK OFF TESTS IN TI ######
-##################################
-data "aws_s3_objects" "test_nwm_outputs" {
-  bucket        = local.test_bucket
-  prefix        = "test_nwm_outputs/"
-  max_keys      = 2000
-}
+resource "aws_sfn_state_machine" "trigger_apocalyptic_tests_step_function" {
+  name     = "hv-vpp-${var.environment}-trigger-apocalyptic-tests"
+  role_arn = var.role
 
-resource "aws_s3_object_copy" "test" {
-  provider = aws.no_tags
-  depends_on  = [var.s3_module, var.lambda_module, var.step_function_module, aws_cloudwatch_event_target.trigger_pipeline_test_run]
-  count       = length(data.aws_s3_objects.test_nwm_outputs.keys)
-  bucket      = local.test_bucket
-  source      = join("/", [local.test_bucket, element(data.aws_s3_objects.test_nwm_outputs.keys, count.index)])
-  key         = replace(element(data.aws_s3_objects.test_nwm_outputs.keys, count.index), "test_nwm_outputs", formatdate("'common/data/model/com/nwm/prod/nwm.'YYYYMMDD", timestamp()))
+  definition = templatefile("${path.module}/trigger_apocalyptic_tests.json.tftpl", {
+    deployment_bucket = var.deployment_bucket
+  })
 }
