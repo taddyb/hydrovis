@@ -1,13 +1,15 @@
 service: srf_18hr_rapid_onset_flooding
 summary: Short-Range 18 Hour Rapid Onset Flooding Forecast
-description: Depicts forecast rapid onset flooding using the short-range configuration 
-  of the National Water Model (NWM) over the contiguous U.S. Shown are reaches 
-  (stream order 4 and below) with a forecast flow increase of 100% or greater within an 
-  hour, and which are expected to be at or above the high water threshold within 6 hours 
-  of that increase. Also shown are USGS HUC10 polygons symbolized by the percentage of 
-  NWM waterway length (within each HUC10) that is expected to meet the previously mentioned 
-  criteria. High water thresholds (regionally varied) were derived using the 40-year NWM 
-  v2.1 reanalysis simulation. Updated every 12 hours.
+description: "Depicts forecast rapid onset flooding using the short-range configuration
+  of the National Water Model (NWM) over the contiguous U.S. Shown are reaches (stream
+  order 4 and below) with a forecast flow increase of 100% or greater within an hour,
+  and which are expected to be at or above the high water threshold within 6 hours
+  of that increase. Also shown are USGS HUC10 polygons symbolized by the percentage
+  of NWM waterway length (within each HUC10) that is expected to meet the previously
+  mentioned criteria. High water thresholds (regionally varied) were derived using
+  the 40-year NWM v3.0 reanalysis simulation.\n\nUpdated hourly.\n\nLink to graphical
+  web page: https://www.weather.gov/owp/operations\n\nLink to documentation: https://www.weather.gov/media/owp/operations/Public_Handbook_V2.3_%20NWC_Visualization_Services.pdf\n
+  \nFor feedback or questions please email nwps.webmaster@noaa.gov"
 tags: rapid onset flooding, national water model, nwm, srf, short, range, conus
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: server

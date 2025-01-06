@@ -1,8 +1,13 @@
 service: ana_soil_moisture_noaa
 summary: Soil Moisture Analysis
-description: Depicts the soil moisture output from the operational National Water Model 
-  analysis and assimilation. Values represent soil saturation for the 0 - 40cm soil layer. 
-  Updated hourly.
+description: "Depicts the soil moisture output from the operational National Water
+  Model analysis and assimilation. Values represent soil saturation for the 0 - 40cm
+  soil layer. \n\nUpdated hourly.\n\nThis service is for internal use only for NOAA
+  employees and requires access to view.  Please do not share externally without prior
+  approval from OWP as this service is experimental and undergoing regular developmental
+  changes. \n\nFor feedback or questions please reach out to GID directly via slack
+  at national-water-center-gid or national-water-center-fim pages or reach out directly
+  to derek.giardino@noaa.gov"
 tags: soil,moisture,national,water,model,nwm
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: image

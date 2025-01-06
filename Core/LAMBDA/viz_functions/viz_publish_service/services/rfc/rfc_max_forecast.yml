@@ -1,13 +1,19 @@
 service: rfc_max_forecast
 summary: RFC Maximum Stage Forecast
-description: Depicts Advanced Hydrologic Prediction Service (AHPS) River Forecast Center (RFC) 
-  forecast points with forecasts at or above action stage. Circles represent forecast points 
-  where stages are changing by less than +/- 5% over the entire forecast period. Upward-pointing 
-  triangles represent forecast points where a greater than 5% increase in stage is expected 
-  sometime during the forecast. If stage increases greater than 5% are not expected, downward-pointing 
-  triangles represent forecast points where a greater than 5% decrease in stage is expected 
-  sometime during the forecast. Forecast points are colored by their maximum forecast flood 
-  category. Updated every 5 minutes.
+description: "Depicts Advanced Hydrologic Prediction Service (AHPS) River Forecast
+  Center (RFC) forecast points with forecasts at or above action stage. Circles represent
+  forecast points where stages are changing by less than +/- 5% over the entire forecast
+  period. Upward-pointing triangles represent forecast points where a greater than
+  5% increase in stage is expected sometime during the forecast. If stage increases
+  greater than 5% are not expected, downward-pointing triangles represent forecast
+  points where a greater than 5% decrease in stage is expected sometime during the
+  forecast. Forecast points are colored by their maximum forecast flood category.
+  \n\nUpdated every 5 minutes.\n\nLink to graphical web page: https://www.weather.gov/owp/operations\n
+  \nLink to documentation: https://www.weather.gov/media/owp/operations/Public_Handbook_V2.3_%20NWC_Visualization_Services.pdf\n
+  \nFor feedback or questions please email nwps.webmaster@noaa.gov\n\nFor more information
+  on the expansion of National Weather Service (NWS) flood inundation mapping capabilities,
+  please visit https://www.weather.gov/owp/operations. For information about the NWM,
+  please visit https://water.noaa.gov."
 tags: rfc,ahps,forecast,maximum,stage
 credits: NOAA/NWS National Water Center
 egis_server: server

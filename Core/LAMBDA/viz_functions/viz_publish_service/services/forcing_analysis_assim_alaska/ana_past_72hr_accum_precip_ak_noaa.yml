@@ -1,8 +1,15 @@
 service: ana_past_72hr_accum_precip_ak_noaa
 summary: NAM-NEST NWP Past 72-Hour Accumulated Precipitation for Alaska
-description: 'Depicts accumulated precipitation totals over the past 72 hours derived from the NAM-NEST NWP forcing for 
-  the operational National Water Model (NWM) analysis and assimilation for the state of Alaska. Updated hourly.'
-tags: nam-nest, nwp, accumulated, precipitation, national, water, model, nwm, alaska, ak, precip
+description: "Depicts accumulated precipitation totals over the past 72 hours derived
+  from the NAM-NEST NWP forcing for the operational National Water Model (NWM) analysis
+  and assimilation for the state of Alaska. \n\nUpdated hourly.\n\nThis service is
+  for internal use only for NOAA employees and requires access to view.  Please do
+  not share externally without prior approval from OWP as this service is experimental
+  and undergoing regular developmental changes. \n\nFor feedback or questions please
+  reach out to GID directly via slack at national-water-center-gid or national-water-center-fim
+  pages or reach out directly to derek.giardino@noaa.gov"
+tags: nam-nest, nwp, accumulated, precipitation, national, water, model, nwm, alaska,
+  ak, precip
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: image
 egis_folder: nwm

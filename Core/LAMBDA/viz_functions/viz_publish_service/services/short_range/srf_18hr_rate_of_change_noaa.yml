@@ -1,11 +1,16 @@
 service: srf_18hr_rate_of_change_noaa
 summary: Short-Range 18 Hour Rate of Change Forecast
-description: Depicts expected change in discharge derived from the operational National Water 
-  Model (NWM) short-range forecast. Change is computed between the current streamflow and that 
-  expected over the next 18 hours at 3-hour intervals, and is only displayed for reaches that 
-  are expected to have flow at or above their high water threshold. High water thresholds 
-  (regionally varied) and AEPs were derived using the 40-year NWM v2.1 reanalysis simulation. 
-  Updated hourly.
+description: "Depicts expected change in discharge derived from the operational National
+  Water Model (NWM) short-range forecast. Change is computed between the current streamflow
+  and that expected over the next 18 hours at 3-hour intervals, and is only displayed
+  for reaches that are expected to have flow at or above their high water threshold.
+  High water thresholds (regionally varied) and AEPs were derived using the 40-year
+  NWM v3.0 reanalysis simulation\n\nUpdated hourly.\n\nThis service is for internal
+  use only for NOAA employees and requires access to view.  Please do not share externally
+  without prior approval from OWP as this service is experimental and undergoing regular
+  developmental changes. \n\nFor feedback or questions please reach out to GID directly
+  via slack at national-water-center-gid or national-water-center-fim pages or reach
+  out directly to derek.giardino@noaa.gov"
 tags: rate of change, national water model, nwm, srf, short, range, conus
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: server

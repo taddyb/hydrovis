@@ -1,7 +1,12 @@
 service: ana_streamflow_noaa
 summary: Streamflow Analysis
-description: Depicts the streamflow output from the operational National Water Model (NWM) 
-  analysis and assimilation for the continental United States. Updated hourly.
+description: "Depicts the streamflow output from the operational National Water Model
+  (NWM) analysis and assimilation for the continental United States.\n\nUpdated hourly.\n
+  \nThis service is for internal use only for NOAA employees and requires access to
+  view.  Please do not share externally without prior approval from OWP as this service
+  is experimental and undergoing regular developmental changes. \n\nFor feedback or
+  questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
 tags: streamflow, national water model, nwm, ana, conus
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: server
