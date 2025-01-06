@@ -1,11 +1,18 @@
 service: srf_48hr_peak_flow_arrival_time_prvi_noaa
-summary: Short-Range 48 Hour Peak Flow Arrival Time Forecast for Puerto Rico and Virgin Islands
-description: Depicts expected peak flow arrival times derived from the operational National Water Model 
-  (NWM) short-range forecast for Puerto Rico and the U.S. Virgin Islands. Shown are reaches that are 
-  expected to have flow at or above high water threshold flow over the next 48 hours. Reaches are colored 
-  by the time at which they are expected to be at their maximum flow within the forecast period. High 
-  water threshold flows and annual exceedance probabilities were derived from USGS regression equations 
-  found at https://pubs.usgs.gov/wri/wri994142/pdf/wri99-4142.pdf. Updated every 12 hours.
+summary: Short-Range 48 Hour Peak Flow Arrival Time Forecast for Puerto Rico and Virgin
+  Islands
+description: "Depicts expected peak flow arrival times derived from the operational
+  National Water Model (NWM) short-range forecast for Puerto Rico and the U.S. Virgin
+  Islands. Shown are reaches that are expected to have flow at or above high water
+  threshold flow over the next 48 hours. Reaches are colored by the time at which
+  they are expected to be at their maximum flow within the forecast period. High water
+  threshold flows and annual exceedance probabilities were derived from USGS regression
+  equations found at https://pubs.usgs.gov/wri/wri994142/pdf/wri99-4142.pdf\n\nUpdated
+  every 12 hours.\n\nThis service is for internal use only for NOAA employees and
+  requires access to view.  Please do not share externally without prior approval
+  from OWP as this service is experimental and undergoing regular developmental changes.
+  \n\nFor feedback or questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
 tags: arrival time, national water model, nwm, srf, short, range, puertorico, prvi
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: server

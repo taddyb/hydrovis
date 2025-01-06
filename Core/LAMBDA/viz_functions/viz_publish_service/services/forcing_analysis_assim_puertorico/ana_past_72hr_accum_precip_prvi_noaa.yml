@@ -1,7 +1,17 @@
 service: ana_past_72hr_accum_precip_prvi_noaa
-summary: MRMS Past 72-Hour Accumulated Precipitation Analysis for Puerto Rico and Virgin Islands
-description: 'Depicts accumulated precipitation totals over the past 72 hours derived from the MRMS forcing for the operational National Water Model (NWM) analysis and assimilation for Puerto Rico and the U.S. Virgin Islands.  If MRMS forcing data is not available, forcing data from the NAM-Nest is used as a backup.  Updated hourly.'
-tags: mrms, accumulated, precipitation, national, water, model, nwm, puertorico, prvi, precip
+summary: MRMS Past 72-Hour Accumulated Precipitation Analysis for Puerto Rico and
+  Virgin Islands
+description: "Depicts accumulated precipitation totals over the past 72 hours derived
+  from the MRMS forcing for the operational National Water Model (NWM) analysis and
+  assimilation for Puerto Rico and the U.S. Virgin Islands. If MRMS forcing data is
+  not available, forcing data from the NAM-Nest is used as a backup. \n\nUpdated hourly.\n
+  \nThis service is for internal use only for NOAA employees and requires access to
+  view.  Please do not share externally without prior approval from OWP as this service
+  is experimental and undergoing regular developmental changes. \n\nFor feedback or
+  questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
+tags: mrms, accumulated, precipitation, national, water, model, nwm, puertorico, prvi,
+  precip
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: image
 egis_folder: nwm

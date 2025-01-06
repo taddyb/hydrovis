@@ -1,7 +1,15 @@
 service: srf_15hr_accum_precip_ak_noaa
 summary: NBM Short-Range Accumulated Precipitation for Alaska
-description: 'Depicts expected accumulated precipitation totals over the next 15 hours derived from the 1- and 6-hour accumulated NBM forcing for the operational National Water Model (NWM) short-range forecast for the state of Alaska. Updated every 6 hours.'
-tags: nbm, nwp, accumulated, precipitation, national, water, model, nwm, alaska, ak, precip
+description: "Depicts expected accumulated precipitation totals over hours 4-18 or
+  15 total hours derived from the 1- and 6-hour accumulated NBM forcing for the operational
+  National Water Model (NWM) short-range forecast for the state of Alaska. \n\nUpdated
+  every 6 hours.\n\nThis service is for internal use only for NOAA employees and requires
+  access to view.  Please do not share externally without prior approval from OWP
+  as this service is experimental and undergoing regular developmental changes. \n
+  \nFor feedback or questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
+tags: nbm, nwp, accumulated, precipitation, national, water, model, nwm, alaska, ak,
+  precip
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: image
 egis_folder: nwm

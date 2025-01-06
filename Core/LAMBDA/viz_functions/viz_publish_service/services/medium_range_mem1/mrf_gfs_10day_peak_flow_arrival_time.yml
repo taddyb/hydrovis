@@ -1,10 +1,14 @@
 service: mrf_gfs_10day_peak_flow_arrival_time
 summary: Medium-Range GFS 10 Day Peak Flow Arrival Time Forecast
-description: Depicts expected peak flow arrival times derived from the operational National Water 
-  Model (NWM) medium-range GFS forecast. Shown are reaches that are expected to have flow at or above 
-  the high water threshold over the next 3 and 10 days. Reaches are colored by the time at which 
-  they are expected to be at their maximum flow within the forecast period. High water flows were 
-  derived using a 40-year retrospective analysis of the NWM (v2.1). Updated every 6 hours.
+description: "Depicts expected peak flow arrival times derived from the operational
+  National Water Model (NWM) medium-range GFS forecast. Shown are reaches that are
+  expected to have flow at or above the high water threshold over the next 3 and 10
+  days. Reaches are colored by the time at which they are expected to be at their
+  maximum flow within the forecast period. High water flows were derived using a 40-year
+  retrospective analysis of the NWM v3.0 reanalysis simulation. \n\nUpdated every
+  6 hours.\n\nLink to graphical web page: https://www.weather.gov/owp/operations\n
+  \nLink to documentation: https://www.weather.gov/media/owp/operations/Public_Handbook_V2.3_%20NWC_Visualization_Services.pdf\n
+  \nFor feedback or questions please email nwps.webmaster@noaa.gov"
 tags: arrival time, national water model, nwm, mrf, medium, range, conus
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: server

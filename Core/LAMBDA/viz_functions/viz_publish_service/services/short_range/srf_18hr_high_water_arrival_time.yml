@@ -1,10 +1,16 @@
 service: srf_18hr_high_water_arrival_time
 summary: Short-Range 18 Hour High Water Arrival Time Forecast
-description: Depicts the forecast arrival time of high water over the next 18 hours. This service is 
-  derived from the short-range configuration of the National Water Model (NWM) over the contiguous U.S. 
-  Shown are reaches that are expected to have flow at or above the high water threshold over the next 
-  18 hours. Reaches are colored by the time at which they are forecast to reach high water. High water 
-  thresholds (regionally varied) were derived using the 40-year NWM v2.1 reanalysis simulation. Updated hourly.
+description: "Depicts the forecast arrival time of high water over the next 18 hours.
+  This service is derived from the short-range configuration of the National Water
+  Model (NWM) over the contiguous U.S. Shown are reaches that are expected to have
+  flow at or above the high water threshold over the next 18 hours. Reaches are colored
+  by the time at which they are forecast to reach high water. High water thresholds
+  (regionally varied) were derived using the 40-year NWM v3.0 reanalysis simulation\n
+  \nUpdated hourly.\n\nThis service is for internal use only for NOAA employees and
+  requires access to view.  Please do not share externally without prior approval
+  from OWP as this service is experimental and undergoing regular developmental changes.
+  \n\nFor feedback or questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
 tags: arrival time, national water model, nwm, srf, short, range, conus
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: server

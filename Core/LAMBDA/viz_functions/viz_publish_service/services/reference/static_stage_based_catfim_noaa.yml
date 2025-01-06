@@ -1,16 +1,28 @@
 service: static_stage_based_catfim_noaa
-summary: Depicts flood inundation extents derived from official NWS category thresholds and the Height 
-  Above Nearest Drainage (HAND) technique. Official stage thresholds are used.
-description: 'Depicts flood inundation extents derived from official NWS category thresholds and the 
-  Height Above Nearest Drainage (HAND) technique. Official stage thresholds (converted to water 
-  surface elevation) are used. Flood inundation maps are colored according to their category. Mapping 
-  extends 5 miles upstream and downstream of AHPS gage locations for streams of consistent stream 
-  order. Not all sites are mapped due to incomplete or unacceptable gage characteristics such as 
-  altitute accuracy, datum method, etc. (this information is available in the attributes table for 
-  the "sites" layer. This is a static service and not a forecast service.'
-tags: nws, flood, categorical, hand, fim, catfim, inundation, library, rfc, height, above, nearest, drainage, ahps, usgs
-credits: National Water Model, NOAA/NWS National Water Center, Advanced Hydrologic Prediction Service, National River Layer Database
+summary: Depicts flood inundation extents derived from official NWS category thresholds
+  and the Height Above Nearest Drainage (HAND) technique. Official stage thresholds
+  are used.
+description: "Depicts flood inundation extents derived from official NWS category
+  thresholds and for every foot in between using the Height Above Nearest Drainage
+  (HAND) technique. Official stage thresholds (converted to water surface elevation)
+  are used. Flood inundation maps are colored according to their category.  Mapping
+  is produced for up to 5 feet above major flood stage.  \n\nRecord flooding is its
+  own layer since it could be below major flooding category. \n\nMapping extends 5
+  miles upstream and downstream of AHPS gage locations for streams of consistent stream
+  order, as well as calibrated to the USGS rating at the gage. Not all sites are mapped
+  due to incomplete or unacceptable gage characteristics such as altitute accuracy,
+  datum method, etc. (this information is available in the attributes table for the
+  \"sites\" layer. \n\nThis is a static service and not a forecast service.\n\nThis
+  service is for internal use only for NOAA employees and requires access to view.\
+  \  Please do not share externally without prior approval from OWP as this service
+  is experimental and undergoing regular developmental changes. \n\nFor feedback or
+  questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
+tags: nws, flood, categorical, hand, fim, catfim, inundation, library, rfc, height,
+  above, nearest, drainage, ahps, usgs
+credits: National Water Model, NOAA/NWS National Water Center, Advanced Hydrologic
+  Prediction Service, National River Layer Database
 egis_server: server
 egis_folder: fim_libs
-feature_service: true
+feature_service: false
 public_service: false

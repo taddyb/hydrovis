@@ -1,8 +1,13 @@
 service: ana_coastal_inundation_depth_noaa
 summary: Coastal Inundation Depth Analysis
-description: Depicts the inundation depth of the National Water Model (NWM) total water level forecast. 
-  This service is derived from the analysis and assimilation configuration of the NWM over the contiguous U.S. 
-  Updated hourly.
+description: "Depicts the inundation depth of the National Water Model (NWM) total
+  water level forecast from the SCHISM modeling system. This service is derived from
+  the analysis and assimilation configuration of the NWM over Contiguous United States.
+  \n\nUpdated hourly.\n\nThis service is for internal use only for NOAA employees
+  and requires access to view.  Please do not share externally without prior approval
+  from OWP as this service is experimental and undergoing regular developmental changes.
+  \n\nFor feedback or questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
 tags: national water model, nwm, ana, conus, schism, coastal, fim, inundation, depth
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: image

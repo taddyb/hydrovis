@@ -1,9 +1,12 @@
 service: ana_anomaly
 summary: Streamflow Anomaly Analysis
-description: Depicts seasonal streamflow anomalies derived from the analysis and 
-  assimilation configuration of the National Water Model (NWM) over the contiguous 
-  U.S. Anomalies are based on 7-day and 14-day moving average streamflow percentiles 
-  for each reach and the current calendar day. Updated daily.
+description: "Depicts seasonal streamflow anomalies derived from the analysis and
+  assimilation configuration of the National Water Model (NWM) over the contiguous
+  U.S. Anomalies are based on 7-day and 14-day moving average streamflow percentiles
+  for each reach and the current calendar day.  This service is one of many Experimental
+  NWC Visualization Services.\n\nUpdated daily. \n\nLink to graphical web page: https://www.weather.gov/owp/operations\n
+  \nLink to documentation: https://www.weather.gov/media/owp/operations/Public_Handbook_V2.3_%20NWC_Visualization_Services.pdf\n
+  \nFor feedback or questions please email nwps.webmaster@noaa.gov"
 tags: streamflow, anomaly, national, water, model, nwm
 credits: National Water Model, NOAA/NWS National Water Center
 egis_server: server
