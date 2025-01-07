@@ -26,9 +26,9 @@
       "enableEyeDomeLighting" : true
     },
     "layers" : [
-      "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/swe_change24hr_tif.xml",
-      "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/swe_change48hr_tif.xml",
-      "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/swe_change72hr_tif.xml"
+      "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/ana_24hr_snow_water_equiv_change_mrf.xml",
+      "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/ana_48hr_snow_water_equiv_change_mrf.xml",
+      "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/ana_72hr_snow_water_equiv_change_mrf.xml"
     ],
     "defaultViewingMode" : "Map",
     "mapType" : "Map",
@@ -37,9 +37,9 @@
     ],
     "defaultExtent" : {
       "xmin" : -6736860.14905805606,
-      "ymin" : -5480645.782853418,
+      "ymin" : -6834525.87560341787,
       "xmax" : 7512515.71521426644,
-      "ymax" : 3939396.15612724889,
+      "ymax" : 5293276.24887724873,
       "spatialReference" : {
         "wkt" : "PROJCS[\"Lambert_Conformal_Conic_2SP\",GEOGCS[\"GCS_unknown\",DATUM[\"D_unknown\",SPHEROID[\"unknown\",6370000.0,0.0]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Lambert_Conformal_Conic\"],PARAMETER[\"false_easting\",0.0],PARAMETER[\"false_northing\",0.0],PARAMETER[\"central_meridian\",-97.0],PARAMETER[\"standard_parallel_1\",30.0],PARAMETER[\"standard_parallel_2\",60.0],PARAMETER[\"latitude_of_origin\",40.0],UNIT[\"Meter\",1.0]]"
       }
@@ -124,12 +124,12 @@
     {
       "type" : "CIMRasterLayer",
       "name" : "Past 24 Hour - Snow Water Equivalent Change",
-      "uRI" : "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/swe_change24hr_tif.xml",
+      "uRI" : "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/ana_24hr_snow_water_equiv_change_mrf.xml",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
       },
       "useSourceMetadata" : true,
-      "description" : "swe_change24hr.tif",
+      "description" : "ana_24hr_snow_water_equiv_change.mrf",
       "layerElevation" : {
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{517BE08B-79DE-4E79-AEBB-C481AE488E6B}"
@@ -147,9 +147,9 @@
       "blendingMode" : "Alpha",
       "dataConnection" : {
         "type" : "CIMStandardDataConnection",
-        "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_past_72hr_snow_water_equivalent_change\\published",
+        "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_72hr_snow_water_equiv_change\\20230421\\21\\workspace\\mrf",
         "workspaceFactory" : "Raster",
-        "dataset" : "ana_past_24hr_snow_water_equivalent_change.mrf",
+        "dataset" : "ana_24hr_snow_water_equiv_change.mrf",
         "datasetType" : "esriDTAny"
       },
       "colorizer" : {
@@ -421,12 +421,12 @@
     {
       "type" : "CIMRasterLayer",
       "name" : "Past 48 Hour - Snow Water Equivalent Change",
-      "uRI" : "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/swe_change48hr_tif.xml",
+      "uRI" : "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/ana_48hr_snow_water_equiv_change_mrf.xml",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
       },
       "useSourceMetadata" : true,
-      "description" : "swe_change48hr.tif",
+      "description" : "ana_48hr_snow_water_equiv_change.mrf",
       "layerElevation" : {
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{517BE08B-79DE-4E79-AEBB-C481AE488E6B}"
@@ -444,9 +444,9 @@
       "blendingMode" : "Alpha",
       "dataConnection" : {
         "type" : "CIMStandardDataConnection",
-        "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_past_72hr_snow_water_equivalent_change\\published",
+        "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_72hr_snow_water_equiv_change\\20230421\\21\\workspace\\mrf",
         "workspaceFactory" : "Raster",
-        "dataset" : "ana_past_48hr_snow_water_equivalent_change.mrf",
+        "dataset" : "ana_48hr_snow_water_equiv_change.mrf",
         "datasetType" : "esriDTAny"
       },
       "colorizer" : {
@@ -718,12 +718,12 @@
     {
       "type" : "CIMRasterLayer",
       "name" : "Past 72 Hour - Snow Water Equivalent Change",
-      "uRI" : "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/swe_change72hr_tif.xml",
+      "uRI" : "CIMPATH=nwm_past_72_hours_snow_water_equivalent_change_analysis/ana_72hr_snow_water_equiv_change_mrf.xml",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
       },
       "useSourceMetadata" : true,
-      "description" : "swe_change72hr.tif",
+      "description" : "ana_72hr_snow_water_equiv_change.mrf",
       "layerElevation" : {
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{517BE08B-79DE-4E79-AEBB-C481AE488E6B}"
@@ -741,9 +741,9 @@
       "blendingMode" : "Alpha",
       "dataConnection" : {
         "type" : "CIMStandardDataConnection",
-        "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_past_72hr_snow_water_equivalent_change\\published",
+        "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_72hr_snow_water_equiv_change\\20230421\\21\\workspace\\mrf",
         "workspaceFactory" : "Raster",
-        "dataset" : "ana_past_72hr_snow_water_equivalent_change.mrf",
+        "dataset" : "ana_72hr_snow_water_equiv_change.mrf",
         "datasetType" : "esriDTAny"
       },
       "colorizer" : {
