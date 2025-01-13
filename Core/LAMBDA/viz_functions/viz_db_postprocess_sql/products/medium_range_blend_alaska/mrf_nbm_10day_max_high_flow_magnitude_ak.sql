@@ -43,5 +43,5 @@ SELECT channels.feature_id,
     to_char(now()::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC') AS update_time,
     channels.geom
 INTO publish.mrf_nbm_10day_max_high_flow_magnitude_ak
-FROM derived.channels_alaska channels
+FROM derived.channels_ak channels
 JOIN high_flow_mag ON channels.feature_id = high_flow_mag.feature_id;
