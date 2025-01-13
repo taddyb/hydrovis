@@ -26,7 +26,7 @@ JOIN cache.max_flows_mrf_nbm_10day_ak AS max_flows
     ON forecasts.feature_id = max_flows.feature_id AND round((forecasts.streamflow*35.315)::numeric, 2) = max_flows.discharge_cfs
 
 -- Join in channels data to get reach metadata and geometry
-JOIN derived.channels_alaska as channels ON forecasts.feature_id = channels.feature_id::bigint
+JOIN derived.channels_ak as channels ON forecasts.feature_id = channels.feature_id::bigint
 
 -- Join in high water arrival time for return time (the yaml config file ensures that arrival time finishes first for this, but we'll join on reference_time as well to ensure)
 JOIN publish.mrf_nbm_10day_high_water_arrival_time_ak AS arrival_time ON forecasts.feature_id = arrival_time.feature_id and forecasts.reference_time = arrival_time.reference_time

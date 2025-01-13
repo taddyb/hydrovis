@@ -10,7 +10,7 @@ WITH rapid_onset AS (
 				(
 				WITH series AS -- Calculate a full 15 hour series for every feature_id, so that unadjacent hours aren't compared
 					(SELECT channels.feature_id, generate_series(1,15,1) AS forecast_hour
-					 FROM derived.channels_alaska channels JOIN cache.max_flows_srf_ak as mf on channels.feature_id = mf.feature_id
+					 FROM derived.channels_ak channels JOIN cache.max_flows_srf_ak as mf on channels.feature_id = mf.feature_id
 					 WHERE channels.strm_order <= 4
 					)
 				SELECT series.feature_id, series.forecast_hour, CASE WHEN streamflow is NOT NULL THEN (streamflow * 35.315) ELSE 0.001 END AS streamflow -- Set streamflow to 0.01 in cases where it is missing, so we don't get a divide by zero error
@@ -71,6 +71,6 @@ SELECT channels.feature_id,
 	ST_LENGTH(channels.geom)*0.000621371 AS reach_Length_miles, to_char(now()::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC') AS update_time,
 	geom
 INTO publish.srf_15hr_rapid_onset_flooding_ak
-FROM derived.channels_alaska channels
+FROM derived.channels_ak channels
 JOIN rapid_onset ON channels.feature_id = rapid_onset.feature_id
 where channels.strm_order <= 4;

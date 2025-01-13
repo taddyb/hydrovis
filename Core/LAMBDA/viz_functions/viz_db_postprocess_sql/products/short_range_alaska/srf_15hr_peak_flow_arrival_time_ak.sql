@@ -26,7 +26,7 @@ JOIN cache.max_flows_srf_ak AS max_flows
     ON forecasts.feature_id = max_flows.feature_id AND forecasts.streamflow = max_flows.discharge_cms
 
 -- Join in channels data to get reach metadata and geometry
-JOIN derived.channels_alaska as channels ON forecasts.feature_id = channels.feature_id::bigint
+JOIN derived.channels_ak as channels ON forecasts.feature_id = channels.feature_id::bigint
 
 -- Join in recurrence flows to get high water threshold
 JOIN derived.recurrence_flows_ak AS rf ON forecasts.feature_id = rf.feature_id
