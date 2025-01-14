@@ -1,12 +1,14 @@
 import datetime
-import boto3
 import os
 import json
 import re
 import urllib.parse
 import inspect
-from botocore.exceptions import ClientError
-
+try:
+    import fsspec
+except:
+    import boto3
+    from botocore.exceptions import ClientError
 
 class RequiredTableNotUpdated(Exception):
     """ This is a custom exception to report back to the AWS Step Function that a required table does not exist or has not yet been updated with the current reference time. """
@@ -104,6 +106,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     cur.execute(sql)
             except Exception as e:
                 raise e
+        self.connection.close()
                 
     ###################################                
     def sql_to_dataframe(self, sql, return_geodataframe=False):
@@ -139,6 +142,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     rows = cur.fetchone()[0]
             except Exception as e:
                 raise e
+        self.connection.close()
 
         return rows
     
@@ -309,6 +313,11 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
 ###################################################################################################################################################
 ###################################################################################################################################################
 class s3_file:
+    try:
+        fs = fsspec.filesystem('s3')
+    except:
+        pass
+
     def __init__(self, bucket, key):
         self.bucket = bucket
         self.key = key
@@ -385,7 +394,6 @@ class s3_file:
     ###################################
     @classmethod
     def get_most_recent_from_configuration(cls, configuration_name, bucket):
-        s3 = boto3.client('s3')
         # Set the S3 prefix based on the confiuration
         def get_s3_prefix(configuration_name, date):
             if configuration_name == 'replace_route':
@@ -402,16 +410,21 @@ class s3_file:
             
         # Get all S3 files that match the bucket / prefix
         def list_s3_files(bucket, prefix):
-            files = []
-            paginator = s3.get_paginator('list_objects_v2')
-            for result in paginator.paginate(Bucket=bucket, Prefix=prefix):
-                for key in result['Contents']:
-                    # Skip folders
-                    if not key['Key'].endswith('/'):
-                        files.append(key['Key'])
-            if len(files) == 0:
-                raise Exception("No Files Found.")
-            return files
+            try:
+                files = cls.fs.ls(f"{bucket}/{prefix}", detail=True)
+                return [f for f in files if f['type'] == 'file']
+            except:
+                s3 = boto3.client('s3')
+                files = []
+                paginator = s3.get_paginator('list_objects_v2')
+                for result in paginator.paginate(Bucket=bucket, Prefix=prefix):
+                    for key in result['Contents']:
+                        # Skip folders
+                        if not key['Key'].endswith('/'):
+                            files.append(key['Key'])
+                if len(files) == 0:
+                    raise Exception("No Files Found.")
+                return files
         # Start with looking at files today, but try yesterday if that doesn't work (in case this runs close to midnight)
         today = datetime.datetime.today().strftime('%Y%m%d')
         yesterday = (datetime.datetime.today() - datetime.timedelta(1)).strftime('%Y%m%d')
@@ -426,15 +439,18 @@ class s3_file:
 
     ###################################
     def check_existence(self):
-        s3_resource = boto3.resource('s3')
         try:
-            s3_resource.Object(self.bucket, self.key).load()
-            return True
-        except ClientError as e:
-            if e.response['Error']['Code'] == "404":
-                return False
-            else:
-                raise
+            return self.fs.exists(f"{self.bucket}/{self.key}")
+        except:
+            s3_resource = boto3.resource('s3')
+            try:
+                s3_resource.Object(self.bucket, self.key).load()
+                return True
+            except ClientError as e:
+                if e.response['Error']['Code'] == "404":
+                    return False
+                else:
+                    raise
 
 ###################################################################################################################################################
 ###################################################################################################################################################
