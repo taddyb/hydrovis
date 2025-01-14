@@ -5,10 +5,10 @@ import re
 import urllib.parse
 import inspect
 try:
+    import fsspec
+except:
     import boto3
     from botocore.exceptions import ClientError
-except:
-    import fsspec
 
 class RequiredTableNotUpdated(Exception):
     """ This is a custom exception to report back to the AWS Step Function that a required table does not exist or has not yet been updated with the current reference time. """
