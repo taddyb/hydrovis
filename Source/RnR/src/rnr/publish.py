@@ -5,6 +5,7 @@ import json
 import os
 from typing import Any, List
 
+import aio_pika
 import lxml
 import httpx
 import redis
@@ -94,32 +95,63 @@ def create_forecast_hash(hml_id: str, forecasts: List[GaugeData]) -> str:
     return hashlib.sha256(val.encode()).hexdigest()
 
 
+async def publish(channel: aio_pika.channel, forecasts: List[GaugeData]) -> None:
+    if not channel:
+        raise RuntimeError(
+            "Message could not be sent as there is no RabbitMQ Connection"
+        )
+    if len(forecasts) > 0:
+        for gauge_data in forecasts:
+            async with channel.transaction():
+                msg = gauge_data.json().encode()
+                try:
+                    await channel.default_exchange.publish(
+                        aio_pika.Message(body=msg),
+                        routing_key=settings.flooded_data_queue,
+                        mandatory=True
+                    )
+                except aio_pika.exceptions.DeliveryError as e:
+                    print(f"Message rejected: {e}")
+                
+            
+
+
 async def main():
-    headers = {
-        'Accept': 'application/ld+json',
-        'User-Agent': '(water.noaa.gov, Tadd.N.Bindas@rtx.com)'
-    }
-    hml_data = fetch_weather_products(headers)
-    if os.getenv("REDIS_URL") is not None:
-        redis_url = os.getenv("REDIS_URL")
-    else:
-        redis_url = "localhost"
-    try:
-        r = redis.Redis(host=redis_url, port=6379, decode_responses=True)
-        for hml in hml_data:
-            hml_id = hml["id"]
-            if r.get(hml_id) is None:
-                hml_url = hml['@rdf:about']
-                site_data = await async_get(hml_url, headers=headers)
-                forecasts = await format_xml(site_data["productText"])
-                forecast_hash = create_forecast_hash(hml_id, forecasts)
-                r.set(hml_id, forecast_hash)
+    connection = await aio_pika.connect_robust(
+        settings.aio_pika_url,
+        heartbeat=30
+    )
 
-
-    except redis.exceptions.ConnectionError as e:
-        raise e("Cannot run Redis service") 
-    
+    async with connection:
+        channel = await connection.channel(publisher_confirms=False)
+        await channel.declare_queue(
+            settings.flooded_data_queue,
+            durable=True
+        )
+        print("Successfully connected to RabbitMQ")
+        headers = {
+            'Accept': 'application/ld+json',
+            'User-Agent': '(water.noaa.gov, Tadd.N.Bindas@rtx.com)'
+        }
+        hml_data = fetch_weather_products(headers)
+        try:
+            r = redis.Redis(
+                host=settings.redis_url,
+                port=settings.redis_port,
+                decode_responses=True
+            )
+            for hml in hml_data:
+                hml_id = hml["id"]
+                if r.get(hml_id) is None:
+                    hml_url = hml['@rdf:about']
+                    site_data = await async_get(hml_url, headers=headers)
+                    forecasts = await format_xml(site_data["productText"])
+                    await publish(channel, forecasts)
+                    forecast_hash = create_forecast_hash(hml_id, forecasts)
+                    r.set(hml_id, forecast_hash)
+        except redis.exceptions.ConnectionError as e:
+            raise e("Cannot run Redis service") 
+        
 
 if __name__ == "__main__":
     asyncio.run(main())
-

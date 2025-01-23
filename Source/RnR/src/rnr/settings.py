@@ -23,9 +23,9 @@ class Settings(BaseSettings):
 
     aio_pika_url: str = "ampq://{}:{}@{}:{}/"
     redis_url: str = "localhost"
+    redis_port: int = 6379
 
-    priority_queue: str = "flooded_data_queue"
-    base_queue: str = "non_flooded_data_queue"
+    flooded_data_queue: str = "flooded_data_queue"
     error_queue: str = "error_queue"
 
     log_path: str = "/app/data/logs"
