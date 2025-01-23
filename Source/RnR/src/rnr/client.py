@@ -3,35 +3,57 @@ from typing import Any, Dict, Optional
 import httpx
 
 
+async def async_get(
+    endpoint: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """An asynchronous GET request using httpx.
+
+    Parameters
+    ----------
+    endpoint : str
+        The URL we're hitting.
+
+    params : Optional[Dict[str, Any]]
+        The parameters passed to the API endpoint.
+
+    headers: Optional[Dict[str, Any]]
+        The headers belonging to the request
+
+    Returns
+    -------
+    Dict[str, Any]
+        The JSON response from the API.
+    """
+    async with httpx.AsyncClient() as client:
+        response = await client.get(endpoint, params=params, headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+
 def get(
-    endpoint: str, params: Optional[Dict[str, Any]] = None, headers=None,
+    endpoint: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """A synchronous GET request using httpx.
 
     Parameters
     ----------
     endpoint : str
-    - The URL we're hitting.
+        The URL we're hitting.
 
-    params : Optional[Dict[str, Any]], optional
-    - The parameters passed to the API endpoint.
+    params : Optional[Dict[str, Any]]
+        The parameters passed to the API endpoint.
+
+    headers: Optional[Dict[str, Any]]
+        The headers belonging to the request
 
     Returns
     -------
     Dict[str, Any]
-    - The JSON response from the API.
-
-    Raises
-    ------
-    NWPSAPIError
-    - If the request fails or returns a non-200 status code.
+        The JSON response from the API.
     """
     with httpx.Client() as client:
         try:
-            # if params is not None:
             response = client.get(endpoint, params=params, headers=headers)
-            # else:
-            #     response = client.get(endpoint)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:

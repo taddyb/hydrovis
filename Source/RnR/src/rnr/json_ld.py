@@ -1,7 +1,9 @@
 """A file to support reading/managing JSON-LD formatted data"""
+import asyncio
+import hashlib
 import json
 import os
-from typing import Any
+from typing import Any, List
 
 import httpx
 import redis
@@ -9,7 +11,19 @@ import redis.exceptions
 from rdflib import Graph
 import xmltodict
 
-from rnr.client import get
+from rnr.client import async_get
+from rnr.schemas.weather import Site
+from rnr.schemas.nwps import GaugeData
+
+STAGES : set = {
+    "action",
+    "minor",
+    "major",
+    "moderate",
+}
+
+BASE_URL : str = "https://api.water.noaa.gov/nwps/v1"
+
 
 def fetch_weather_products(headers) -> list[Any]:
     url = "https://api.weather.gov/products"
@@ -51,7 +65,38 @@ def fetch_weather_products(headers) -> list[Any]:
             print(f"Error fetching data: {response.status_code}")
             raise Exception
 
-if __name__ == "__main__":
+
+async def format_xml(product_text: str) -> List[GaugeData]:
+    """A function to format the product text from HML into valid XML segments
+    """
+    xml_split = product_text.split("?xml")
+    forecasts = []
+
+    # ignore the first one since it's not valid XML
+    for i in range(1, len(xml_split)):
+        xml_segment = "<?xml" + xml_split[i][:-2]  # adding removed XML tag, and removed trailing tags
+        site = Site.from_xml(xml_segment)
+        endpoint = f"{BASE_URL}/gauges/{site.properties['id']}"
+        try:
+            forecast = await async_get(endpoint)
+            gauge_data = GaugeData(**forecast)
+            if gauge_data.ObservedFloodCategory in STAGES:
+                forecasts.append(gauge_data)
+        except httpx.HTTPStatusError as e:
+            print(f"{endpoint} hit 404 error: {str(e)}")
+            
+    return forecasts 
+
+
+def create_forecast_hash(hml_id: str, forecasts: List[GaugeData]) -> str:
+    if len(forecasts) == 0:
+        val = hml_id
+    else:
+        val = "".join([forecast.lid for forecast in forecasts])
+    return hashlib.sha256(val.encode()).hexdigest()
+
+
+async def main():
     headers = {
         'Accept': 'application/ld+json',
         'User-Agent': '(water.noaa.gov, Tadd.N.Bindas@rtx.com)'
@@ -67,9 +112,16 @@ if __name__ == "__main__":
             hml_id = hml["id"]
             if r.get(hml_id) is None:
                 hml_url = hml['@rdf:about']
-                site_data = get(hml_url, headers=headers)
-                product_text = site_data["productText"]
+                site_data = await async_get(hml_url, headers=headers)
+                forecasts = await format_xml(site_data["productText"])
+                forecast_hash = create_forecast_hash(hml_id, forecasts)
+                r.set(hml_id, forecast_hash)
+
 
     except redis.exceptions.ConnectionError as e:
         raise e("Cannot run Redis service") 
+    
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
