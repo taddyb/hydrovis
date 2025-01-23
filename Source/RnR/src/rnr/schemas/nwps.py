@@ -4,17 +4,6 @@ from typing import List, Optional, Union
 from pydantic import BaseModel, ConfigDict
 
 
-class Subset(BaseModel):
-    message: str
-    comid: int
-    layers: List["str"]
-    output_file: str
-
-
-class SubsetLocations(BaseModel):
-    subset_locations: List[Subset]
-
-
 class RFC(BaseModel):
     """
     River Forecast Center information.

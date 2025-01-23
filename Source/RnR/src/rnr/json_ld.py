@@ -5,6 +5,7 @@ import json
 import os
 from typing import Any, List
 
+import lxml
 import httpx
 import redis
 import redis.exceptions
@@ -14,16 +15,9 @@ import xmltodict
 from rnr.client import async_get
 from rnr.schemas.weather import Site
 from rnr.schemas.nwps import GaugeData
+from rnr.settings import Settings
 
-STAGES : set = {
-    "action",
-    "minor",
-    "major",
-    "moderate",
-}
-
-BASE_URL : str = "https://api.water.noaa.gov/nwps/v1"
-
+settings = Settings()
 
 def fetch_weather_products(headers) -> list[Any]:
     url = "https://api.weather.gov/products"
@@ -75,12 +69,16 @@ async def format_xml(product_text: str) -> List[GaugeData]:
     # ignore the first one since it's not valid XML
     for i in range(1, len(xml_split)):
         xml_segment = "<?xml" + xml_split[i][:-2]  # adding removed XML tag, and removed trailing tags
-        site = Site.from_xml(xml_segment)
-        endpoint = f"{BASE_URL}/gauges/{site.properties['id']}"
+        try:
+            site = Site.from_xml(xml_segment)
+        except lxml.etree.XMLSyntaxError:
+            xml_segment = xml_segment.split("</site>")[0] + "</site>"  # Removing extra content at end of document
+            site = Site.from_xml(xml_segment)
+        endpoint = f"{settings.BASE_URL}/gauges/{site.properties['id']}"
         try:
             forecast = await async_get(endpoint)
             gauge_data = GaugeData(**forecast)
-            if gauge_data.ObservedFloodCategory in STAGES:
+            if gauge_data.ForecastFloodCategory in settings.STAGES:
                 forecasts.append(gauge_data)
         except httpx.HTTPStatusError as e:
             print(f"{endpoint} hit 404 error: {str(e)}")
