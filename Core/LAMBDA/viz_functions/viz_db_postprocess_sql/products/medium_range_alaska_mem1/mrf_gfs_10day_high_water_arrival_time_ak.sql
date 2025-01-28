@@ -41,5 +41,5 @@ SELECT channels.feature_id,
     arrival_time.update_time,
     channels.geom
 INTO publish.mrf_gfs_10day_high_water_arrival_time_ak
-FROM derived.channels_alaska channels
+FROM derived.channels_ak channels
 JOIN arrival_time ON channels.feature_id = arrival_time.feature_id;

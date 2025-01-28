@@ -16,4 +16,4 @@ SELECT
     channels.geom
 INTO publish.ana_streamflow_ak
 FROM cache.max_flows_ana_ak as ana
-left join derived.channels_alaska as channels ON channels.feature_id = ana.feature_id::bigint;
+left join derived.channels_ak as channels ON channels.feature_id = ana.feature_id::bigint;
