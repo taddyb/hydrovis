@@ -661,15 +661,10 @@ def parse_range_token_value(reference_date_file, range_token, existing_list = []
 
 
 def get_file_tokens(file_pattern):
-    token_dict = {}
-    tokens = re.findall("{{[a-z]*:[^{]*}}", file_pattern)
+    tokens = re.findall("{{(?P<key>[a-z]+):(?P<value>[^{]+)}}", file_pattern)
     token_dict = {'datetime': [], 'range': [], 'variable': []}
-    for token in tokens:
-        token_key = token.split(":")[0][2:]
-        token_value = token.split(":")[1][:-2]
-
-        token_dict[token_key].append(token_value)
-        
+    for (key, value) in tokens:
+        token_dict[key].append(value)
     return token_dict
 
 def parse_datetime_token_value(input_file, reference_date, datetime_token):
@@ -726,17 +721,17 @@ def get_formatted_files(file_pattern, token_dict, reference_date):
     return reference_date_files
 
 def generate_file_list(file_pattern, file_step, file_window, reference_time):
-    import pandas as pd
     import isodate
-    
-    file_list = [] 
+
+    file_list = []
     if 'common/data/model/com/nwm/prod' in file_pattern and (datetime.today() - timedelta(29)) > reference_time:
         file_pattern = file_pattern.replace('common/data/model/com/nwm/prod', 'https://storage.googleapis.com/national-water-model')
 
     if file_window:
         if not file_step:
-            file_step = None
-        reference_dates = pd.date_range(reference_time-isodate.parse_duration(file_window), reference_time, freq=file_step)
+            raise ValueError("file_window and file_step must be specified together")
+        start = reference_time - isodate.parse_duration(file_window)
+        reference_dates = list(date_range(start, reference_time, isodate.parse_duration(file_step)))
     else:
         reference_dates = [reference_time]
 
@@ -767,3 +762,10 @@ def organize_input_files(fileset_bucket, fileset, download_subfolder):
         download_path = check_if_file_exists(fileset_bucket, file, download=True, download_subfolder=download_subfolder)
         local_files.append(download_path)
     return local_files
+
+
+def date_range(start, stop, step):
+    assert start < stop and start + step > start
+    while start + step <= stop:
+        yield start
+        start += step
