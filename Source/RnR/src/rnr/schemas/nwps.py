@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict
@@ -767,84 +768,26 @@ class GaugeForecast(BaseModel):
     secondary_unit: str
 
 
-class ProcessedData(BaseModel):
-    """
-    A Pydantic model representing processed gauge data, combining forecast information with location details.
+class ReachClassification(str, Enum):
+    rfc_point = "rfc_point"
+    flowline = "flowline"
+    
 
-    Attributes:
-    ----------
-    times : List[datetime]
-        List of timestamps for the forecast data points.
-    primary_name : str
-        Name of the primary forecast parameter (e.g., "stage" or "flow").
-    primary_forecast : List[float]
-        List of primary forecast values corresponding to the timestamps.
-    primary_unit : str
-        Unit of measurement for the primary forecast values.
-    secondary_name : str
-        Name of the secondary forecast parameter.
-    secondary_forecast : List[float]
-        List of secondary forecast values corresponding to the timestamps.
-    secondary_unit : str
-        Unit of measurement for the secondary forecast values.
-    status : Status
-        Current observed and forecast status of the gauge.
-    lid : str
-        Location identifier for the gauge.
-    upstream_lid:
-        The upstream location identifier
-    downstream_lid: str
-        The downstream location identifier
-    usgs_id : str
-        USGS identifier for the gauge.
-    feature_id : Optional[int]
-        Optional feature identifier.
-    downstream_feature_id: Optional[int]
-        The downstream feature identifier
-    reach_id : str
-        Identifier for the river reach where the gauge is located.
-    name : str
-        Name of the gauge location.
-    rfc : RFC
-        River Forecast Center responsible for this gauge.
-    wfo : WFO
-        Weather Forecast Office responsible for this area.
-    county : str
-        County where the gauge is located.
-    timeZone : str
-        Time zone of the gauge location.
-    latitude : float
-        Latitude coordinate of the gauge.
-    longitude : float
-        Longitude coordinate of the gauge.
-    """
+class Reach(BaseModel):
+
+    reach_id: int
+    downstream_reach_id: int
+    reach_classification: ReachClassification
+    times: List[datetime]
+    forecast: List[float]
+    
+
+class ProcessedData(BaseModel):
 
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
-    times: List[datetime]
-    primary_name: str
-    primary_forecast: List[float]
-    primary_unit: str
-    secondary_name: str
-    secondary_forecast: List[float]
-    secondary_unit: str
-    status: Status
     lid: str
-    upstream_lid: str
     downstream_lid: str
-    usgs_id: str
-    feature_id: Optional[int]
-    downstream_feature_id: Optional[int]
-    latest_observation: Union[List[float], None]
-    latest_obs_units: str
-    reach_id: str
-    name: str
-    rfc: RFC
-    wfo: WFO
-    state: State
-    county: str
-    timeZone: str
-    latitude: float
-    longitude: float
+    reaches: Optional[List[Reach]]
 
 
 class ResultItem(BaseModel):

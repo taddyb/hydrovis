@@ -24,7 +24,7 @@ async def async_get(
     Dict[str, Any]
         The JSON response from the API.
     """
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30) as client:
         response = await client.get(endpoint, params=params, headers=headers)
         response.raise_for_status()
         return response.json()
