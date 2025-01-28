@@ -1,4 +1,4 @@
-import boto3
+import fsspec
 import os
 import rioxarray as rxr
 from rasterio.crs import CRS
@@ -51,21 +51,11 @@ def open_raster(bucket, file, variable):
         data = ds[variable]
     except:
         data = ds
-        
-    
-    if "alaska" in file:
-        proj4 = "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=-135 +x_0=0 +y_0=0 +R=6370000 +units=m +no_defs"
-    else:
-        try:
-            proj4 = data.proj4
-        except:
-            proj4 = ds.proj4
-            
-    crs = CRS.from_proj4(proj4)
 
+    proj4 = ds.proj4
+    crs = CRS.from_proj4(proj4)
     os.remove(download_path)
-    
-    return [data, crs]
+    return data, crs
 
 def create_raster(data, crs, raster_name):
     print(f"Creating raster for {raster_name}")
@@ -87,15 +77,12 @@ def create_raster(data, crs, raster_name):
 
 def upload_raster(local_raster, output_bucket, output_workspace):
     raster_name = os.path.basename(local_raster)
+    s3_raster_key = f"s3://{output_bucket}/{output_workspace}/tif/{raster_name}"
     
-    s3_raster_key = f"{output_workspace}/tif/{raster_name}"
-    
-    print(f"--> Uploading raster to s3://{output_bucket}/{s3_raster_key}")
-    s3 = boto3.client('s3')
-    
-    s3.upload_file(local_raster, output_bucket, s3_raster_key)
+    print(f"--> Uploading raster to {s3_raster_key}")
+    s3 = fsspec.filesystem('s3')
+    s3.put_file(local_raster, s3_raster_key)
     os.remove(local_raster)
-
     return s3_raster_key
 
 def sum_rasters(bucket, input_files, variable):
