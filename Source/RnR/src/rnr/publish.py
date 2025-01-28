@@ -1,5 +1,6 @@
 """A file to support reading/managing JSON-LD formatted data"""
 import asyncio
+from datetime import datetime
 import hashlib
 import json
 from typing import Any, List
@@ -17,7 +18,6 @@ from rnr.client import async_get, get
 from rnr.schemas.weather import Site
 from rnr.schemas.nwps import GaugeData, ProcessedData, Reach, ReachClassification
 from rnr.settings import Settings
-from rnr.utils import quicksort_weather_data
 
 settings = Settings()
 
@@ -190,8 +190,7 @@ async def main():
                 port=settings.redis_port,
                 decode_responses=True
             )
-            print("sorting weather data based on issuance time")
-            hml_data = quicksort_weather_data(hml_data)
+            hml_data = sorted(hml_data, key=lambda x: datetime.fromisoformat(x["issuanceTime"]))
             for hml in tqdm(hml_data, desc="reading through api.weather.gov HML outputs"):
                 hml_id = hml["id"]
                 if r.get(hml_id) is None:
