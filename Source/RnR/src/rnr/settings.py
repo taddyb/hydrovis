@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     redis_url: str = "localhost"
     redis_port: int = 6379
 
-    flooded_data_queue: str = "flooded_data_queue"
+    flooded_data_queue: str = "hml_files"
     error_queue: str = "error_queue"
 
     log_path: str = "/app/data/logs"
