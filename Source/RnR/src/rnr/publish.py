@@ -15,7 +15,7 @@ from tqdm import tqdm
 import xmltodict
 
 from rnr.client import async_get, get
-from rnr.schemas.weather import Site
+from rnr.schemas.weather import Site, HML
 from rnr.schemas.nwps import GaugeData, ProcessedData, Reach, ReachClassification
 from rnr.settings import Settings
 
@@ -124,46 +124,46 @@ def fetch_all_flows(processed_data: ProcessedData, gauge_data: GaugeData) -> Lis
     return output
 
 
-async def publish(channel: aio_pika.channel, forecasts: List[GaugeData]) -> None:
+async def publish(channel: aio_pika.channel, hml: HML) -> None:
     if not channel:
         raise RuntimeError(
             "Message could not be sent as there is no RabbitMQ Connection"
         )
-    if len(forecasts) > 0:
-        for gauge_data in forecasts:
-            forecast_endpoint = f"{settings.BASE_URL}/gauges/{gauge_data.lid}/stageflow/forecast"
-            site_data = await async_get(forecast_endpoint)
-            if site_data["data"][0]["secondary"] == -999:
-                continue
-            else:
-                metadata_endpoint = f"{settings.BASE_URL}/reaches/{gauge_data.reachId}"
-                downstream_metadata = get(metadata_endpoint)
-                downstream_reach_id = int(downstream_metadata["route"]["downstream"][0]["reachId"])
-                processed_data = ProcessedData(
-                    lid = gauge_data.lid,
-                    downstream_lid = gauge_data.downstreamLid,
-                    reaches = [
-                        Reach(
-                            reach_id=gauge_data.reachId,
-                            downstream_reach_id=downstream_reach_id,
-                            reach_classification=ReachClassification.rfc_point,
-                            times = [val["validTime"] for val in site_data["data"]],
-                            forecast=[val["secondary"] for val in site_data["data"]],
-                        )
-                    ]
-                )
-                flowline_data = fetch_all_flows(processed_data, gauge_data)
-                processed_data.reaches.extend(flowline_data)
-            async with channel.transaction():
-                msg = processed_data.json().encode()
-                try:
-                    await channel.default_exchange.publish(
-                        aio_pika.Message(body=msg),
-                        routing_key=settings.flooded_data_queue,
-                        mandatory=True
-                    )
-                except aio_pika.exceptions.DeliveryError as e:
-                    print(f"Message rejected: {e}")
+    # if len(forecasts) > 0:
+    #     for gauge_data in forecasts:
+    #         forecast_endpoint = f"{settings.BASE_URL}/gauges/{gauge_data.lid}/stageflow/forecast"
+    #         site_data = await async_get(forecast_endpoint)
+    #         if site_data["data"][0]["secondary"] == -999:
+    #             continue
+    #         else:
+    #             metadata_endpoint = f"{settings.BASE_URL}/reaches/{gauge_data.reachId}"
+    #             downstream_metadata = get(metadata_endpoint)
+    #             downstream_reach_id = int(downstream_metadata["route"]["downstream"][0]["reachId"])
+    #             processed_data = ProcessedData(
+    #                 lid = gauge_data.lid,
+    #                 downstream_lid = gauge_data.downstreamLid,
+    #                 reaches = [
+    #                     Reach(
+    #                         reach_id=gauge_data.reachId,
+    #                         downstream_reach_id=downstream_reach_id,
+    #                         reach_classification=ReachClassification.rfc_point,
+    #                         times = [val["validTime"] for val in site_data["data"]],
+    #                         forecast=[val["secondary"] for val in site_data["data"]],
+    #                     )
+    #                 ]
+    #             )
+    #             flowline_data = fetch_all_flows(processed_data, gauge_data)
+    #             processed_data.reaches.extend(flowline_data)
+    async with channel.transaction():
+        msg = hml.json().encode()
+        try:
+            await channel.default_exchange.publish(
+                aio_pika.Message(body=msg),
+                routing_key=settings.flooded_data_queue,
+                mandatory=True
+            )
+        except aio_pika.exceptions.DeliveryError as e:
+            print(f"Message rejected: {e}")
                 
 
 async def main():
@@ -194,12 +194,13 @@ async def main():
             for hml in tqdm(hml_data, desc="reading through api.weather.gov HML outputs"):
                 hml_id = hml["id"]
                 if r.get(hml_id) is None:
-                    hml_url = hml['@rdf:about']
-                    site_data = await async_get(hml_url, headers=headers)
-                    forecasts = await format_xml(site_data["productText"])
-                    await publish(channel, forecasts)
-                    forecast_hash = create_forecast_hash(hml_id, forecasts)
-                    r.set(hml_id, forecast_hash)
+                    hml_obj = HML(**hml)
+                    # site_data = await async_get(hml_url, headers=headers)
+                    # forecasts = await format_xml(site_data["productText"])
+                    await publish(channel, hml_obj)
+                    # forecast_hash = create_forecast_hash(hml_id, forecasts)
+                    r.set(hml_id, hml_obj.json())
+                    r.expire(hml_id, 604800)  # exires after a week
         except redis.exceptions.ConnectionError as e:
             raise e("Cannot run Redis service") 
         
